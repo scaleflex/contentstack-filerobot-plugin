@@ -1,9 +1,9 @@
-import Extension from "@contentstack/app-sdk/dist/src/extension";
+import Types from "@contentstack/app-sdk/dist/src/types";
 import { useAppSdk } from "./useAppSdk";
 import { get, isEmpty, keys } from "lodash";
 import { useMemo } from "react";
 
-type LocationType = Extension["location"];
+type LocationType = Types.LocationType
 
 /**
  * Returns the location name (eg: CustomField) and the location instance from the SDK
@@ -18,11 +18,12 @@ export const useAppLocation = () => {
    * memoized locationName and location instance
    */
   const { locationName, location } = useMemo(() => {
-    let location: LocationType[keyof LocationType] = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let location: any;
     let locationName: keyof LocationType | string = "";
     for (let i = 0; i <= locations.length; i++) {
       if (!isEmpty(get(appSdk, `location.${locations[i]}`, undefined))) {
-        locationName = locations[i] as keyof LocationType;
+        locationName = locations[i] as string;
         location = get(
           appSdk?.location,
           locationName
