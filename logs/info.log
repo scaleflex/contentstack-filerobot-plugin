@@ -1,0 +1,9 @@
+{"level":"warn","message":"Some error occurred while fetching apps."}
+{"level":"warn","message":"Some error occurred while fetching apps."}
+{"level":"warn","message":"Some error occurred while fetching apps."}
+{"level":"warn","message":"As Scaleflex Filerobot is a stack app, it can only be installed in a stack. Please select a stack."}
+{"level":"info","message":"Installing Scaleflex Filerobot on stack blt9a9e6b108d291631."}
+{"level":"warn","message":"As Scaleflex Filerobot is a stack app, it can only be installed in a stack. Please select a stack."}
+{"level":"info","message":"Installing Scaleflex Filerobot on stack blt9a9e6b108d291631."}
+{"level":"info","message":"Scaleflex Filerobot installed successfully in Hiep Stack."}
+{"level":"info","message":"Please use the following URL to start using the stack: https://eu-app.contentstack.com/#!/stack/blt9a9e6b108d291631/dashboard"}

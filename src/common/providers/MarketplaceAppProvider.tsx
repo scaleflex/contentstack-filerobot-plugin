@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useMemo } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
 import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
 import { isNull } from "lodash";
-
+import { Props } from "../types/types";
 import { KeyValueObj } from "../types/types";
 import { AppFailed } from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
@@ -17,40 +17,34 @@ type ProviderProps = {
  */
 export const MarketplaceAppProvider: React.FC<ProviderProps> = ({ children }) => {
   const [failed, setFailed] = useState<boolean>(false);
-  const [appSdk, setAppSdk] = useState<UiLocation | null>(null);
-  const [appConfig, setConfig] = useState<KeyValueObj | null>(null);
+  const [appSdk, setAppSdk] = useState<any>({});
+  const [appConfig, setAppConfig] = useState<Props>({});
 
   // Initialize the SDK and track analytics event
   useEffect(() => {
     ContentstackAppSDK.init()
-      .then(async (appSdk) => {
-        setAppSdk(appSdk);
-        //updated Height of the Custom Field Iframe.
-        appSdk.location.DashboardWidget?.frame?.disableAutoResizing();
-        await appSdk.location.CustomField?.frame?.updateHeight?.(450);
-        //updated Height and Width of the Field Modifier Iframe.
-        appSdk.location.FieldModifierLocation?.frame?.disableAutoResizing();
-        await appSdk.location.FieldModifierLocation?.frame?.updateDimension({ height: 380, width: 520 });
-        // //updated Height of the Stack Dashboard Iframe.
-        appSdk.location.DashboardWidget?.frame?.disableAutoResizing();
-        await appSdk.location.DashboardWidget?.frame?.updateHeight?.(722);
-        const appConfig = await appSdk.getConfig();
-        setConfig(appConfig);
+      .then(async (appSDK: any) => {
+        await setAppSdk(appSDK);
+        await appSDK?.location?.CustomField?.frame?.enableAutoResizing();
+        const appSdkConfig = await appSDK?.getConfig();
+        await setAppConfig(appSdkConfig);
       })
-      .catch(() => {
+      .catch((error) => {
+        const currentLocation = window?.location?.href;
+        if (!currentLocation?.includes("selector-page"))
+          console.error("Error: Contentstack Initialization", error);
         setFailed(true);
       });
   }, []);
 
-  // wait until the SDK is initialized. This will ensure the values are set
-  // correctly for appSdk.
-  if (!failed && isNull(appSdk)) {
-    return <div>Loading...</div>;
-  }
+  const contextValue = useMemo(
+    () => ({ appSdk, appConfig, appFailed: failed }),
+    [appSdk, appConfig, failed]
+  );
 
-  if (failed) {
-    return <AppFailed />;
-  }
-
-  return <MarketplaceAppContext.Provider value={{ appSdk, appConfig }}>{children}</MarketplaceAppContext.Provider>;
+  return (
+    <MarketplaceAppContext.Provider value={contextValue}>
+      {!failed && isNull(appSdk) ? <div>Loading...</div> : children}
+    </MarketplaceAppContext.Provider>
+  );
 };

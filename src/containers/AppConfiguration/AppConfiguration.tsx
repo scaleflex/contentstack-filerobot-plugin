@@ -8,14 +8,14 @@ import Tooltip from "../Tooltip/Tooltip";
 
 const AppConfigurationExtension: React.FC = () => {
   const { installationData, setInstallationData } = useInstallationData();
-  const appConfigDataRef = useRef<HTMLInputElement>(null);
-  const serverConfigDataRef = useRef<HTMLInputElement>(null);
+  const securityTemplateIdConfigDataRef = useRef<HTMLInputElement>(null);
+  const containerConfigDataRef = useRef<HTMLInputElement>(null);
 
   const updateConfig = async () => {
     if (typeof setInstallationData !== "undefined") {
       setInstallationData({
-        configuration: { sample_app_configuration: appConfigDataRef.current?.value },
-        serverConfiguration: { sampl_server_configuration: serverConfigDataRef.current?.value },
+        configuration: { security_template_id: securityTemplateIdConfigDataRef.current?.value, container: containerConfigDataRef.current?.value },
+        serverConfiguration: {  },
       });
     }
   };
@@ -33,16 +33,16 @@ const AppConfigurationExtension: React.FC = () => {
             <div className={`${styles.infoContainerWrapper}`}>
               <div className={`${styles.infoContainer}`}>
                 <div className={`${styles.labelWrapper}`}>
-                  <label htmlFor="appConfigData">Sample App Configuration</label>
-                  <Tooltip content="You can save this field for information such as Username, Email, Number, Date, etc." />
+                  <label htmlFor="appConfigData">Security Template Id</label>
+                  {/* <Tooltip content="You can save this field for information such as Username, Email, Number, Date, etc." /> */}
                 </div>
               </div>
               <div className={`${styles.inputContainer}`}>
                 <input
                   type="text"
-                  ref={appConfigDataRef}
+                  ref={securityTemplateIdConfigDataRef}
                   required
-                  value={installationData.configuration.sample_app_configuration as string}
+                  value={installationData.configuration.security_template_id as string}
                   placeholder="Enter Field Value"
                   name="appConfigData"
                   autoComplete="off"
@@ -50,12 +50,40 @@ const AppConfigurationExtension: React.FC = () => {
                   onChange={updateConfig} />
               </div>
             </div>
-            <div className={`${styles.descriptionContainer}`}>
+            {/* <div className={`${styles.descriptionContainer}`}>
               <p>Use this field to share non-sensitive configurations of your app with other locations.</p>
-            </div>
+            </div> */}
           </div>
 
           <div className={`${styles.configContainer}`}>
+            <div className={`${styles.infoContainerWrapper}`}>
+              <div className={`${styles.infoContainer}`}>
+                <div className={`${styles.labelWrapper}`}>
+                  <label htmlFor="appConfigData">Container</label>
+                  {/* <Tooltip content="You can save this field for information such as Username, Email, Number, Date, etc." /> */}
+                </div>
+              </div>
+              <div className={`${styles.inputContainer}`}>
+                <input
+                  type="text"
+                  ref={containerConfigDataRef}
+                  required
+                  value={installationData.configuration.container as string}
+                  placeholder="Enter Field Value"
+                  name="appConfigData"
+                  autoComplete="off"
+                  className={`${styles.fieldInput}`}
+                  onChange={updateConfig} />
+              </div>
+            </div>
+            {/* <div className={`${styles.descriptionContainer}`}>
+              <p>Use this field to share non-sensitive configurations of your app with other locations.</p>
+            </div> */}
+          </div>
+
+          
+
+          {/* <div className={`${styles.configContainer}`}>
             <div className={`${styles.infoContainerWrapper}`}>
               <div className={`${styles.infoContainer}`}>
                 <div className={`${styles.labelWrapper}`}>
@@ -81,7 +109,8 @@ const AppConfigurationExtension: React.FC = () => {
                 webhooks.
               </p>
             </div>
-          </div>
+          </div> */}
+
         </div>
 
         <div className={`${styles.locationDescription}`}>

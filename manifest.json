@@ -1,105 +1,130 @@
 {
-  "description": "",
-  "icon": "",
-  "name": "",
-  "organization_uid": "",
-  "target_type": "stack",
-  "visibility": "private",
-  "uid": "",
-  "ui_location": {
-    "signed": false,
-    "base_url": "http://localhost:3000",
-    "locations": [
-      {
-        "type": "cs.cm.stack.custom_field",
-        "meta": [
-          {
-            "multiple": false,
-            "path": "/#/custom-field",
-            "signed": false,
-            "enabled": true,
-            "data_type": "json"
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.dashboard",
-        "meta": [
-          {
-            "path": "/#/stack-dashboard",
-            "signed": false,
-            "enabled": true,
-            "default_width": "half"
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.asset_sidebar",
-        "meta": [
-          {
-            "blur": false,
-            "path": "/#/asset-sidebar",
-            "signed": false,
-            "enabled": true,
-            "width": 500
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.sidebar",
-        "meta": [
-          {
-            "path": "/#/entry-sidebar",
-            "signed": false,
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.full_page",
-        "meta": [
-          {
-            "path": "/#/full-page",
-            "signed": false,
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.field_modifier",
-        "meta": [
-          {
-            "path": "/#/field-modifier",
-            "signed": false,
-            "enabled": true,
-            "allowed_types": ["$all"]
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.config",
-        "meta": [
-          {
-            "path": "/#/app-configuration",
-            "signed": false,
-            "enabled": true
-          }
-        ]
-      },
-      {
-        "type": "cs.cm.stack.rte",
-        "meta": [
-          {
-            "path": "/json-rte.js",
-            "signed": false,
-            "enabled": true
-          }
-        ]
-      }
-    ]
-  },
-  "hosting": {
-    "provider": "external",
-    "deployment_url": "http://localhost:3000"
-  }
+	"uid": "65e997d02adeba0012c6e00f",
+	"name": "Scaleflex Filerobot",
+	"description": "Store, enrich, normalize, resize, optimize & distribute your images and videos rocket fast around the world.",
+	"target_type": "stack",
+	"visibility": "private",
+	"version": 17,
+	"icon": "",
+	"ui_location": {
+		"signed": false,
+		"base_url": "http://localhost:3000",
+		"locations": [
+			{
+				"type": "cs.cm.stack.custom_field",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526cb",
+						"multiple": false,
+						"path": "/#/custom-field",
+						"signed": false,
+						"enabled": true,
+						"data_type": "json"
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.dashboard",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526cc",
+						"path": "/#/stack-dashboard",
+						"signed": false,
+						"enabled": true,
+						"default_width": "half"
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.asset_sidebar",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526cd",
+						"blur": false,
+						"path": "/#/asset-sidebar",
+						"signed": false,
+						"enabled": false,
+						"width": 500,
+						"required": false
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.sidebar",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526ce",
+						"path": "/#/entry-sidebar",
+						"signed": false,
+						"enabled": true
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.full_page",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526cf",
+						"path": "/#/full-page",
+						"signed": false,
+						"enabled": true
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.field_modifier",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526d0",
+						"path": "/#/field-modifier",
+						"signed": false,
+						"enabled": true,
+						"allowed_types": [
+							"$all"
+						]
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.config",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526d1",
+						"path": "/#/app-configuration",
+						"signed": false,
+						"enabled": true
+					}
+				]
+			},
+			{
+				"type": "cs.cm.stack.rte",
+				"meta": [
+					{
+						"uid": "65e997d0f99c8c82d5c526d2",
+						"path": "/json-rte.js",
+						"signed": false,
+						"enabled": true
+					}
+				]
+			}
+		]
+	},
+	"oauth": {
+		"client_id": "0MB9z1fcX3Bdg28g",
+		"client_secret": "Wt11KBH1bfKBwVHZP39G8p9JCEbFz6vG",
+		"redirect_uri": "https://example.com/oauth/callback",
+		"user_token_config": {
+			"enabled": false,
+			"scopes": [],
+			"allow_pkce": false
+		},
+		"app_token_config": {
+			"enabled": false,
+			"scopes": []
+		}
+	},
+	"hosting": {
+		"provider": "external",
+		"deployment_url": "http://localhost:3000"
+	}
 }
