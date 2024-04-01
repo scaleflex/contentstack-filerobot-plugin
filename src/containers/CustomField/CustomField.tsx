@@ -4,6 +4,7 @@ import Explorer from '@filerobot/explorer'
 import Filerobot from '@filerobot/core'
 import XHRUpload from '@filerobot/xhr-upload'
 import { useCustomField } from "../../common/hooks/useCustomField";
+import { useEntry } from "../../common/hooks/useEntry";
 import { FileRobotData } from "../../common/types/types";
 import { isEmpty, isArray } from "lodash";
 import "./CustomField.css";
@@ -21,6 +22,7 @@ const CustomFieldExtension = () => {
   const [ stateFiles, setFiles ] = useState<any[]>([]);
   const [ removeLastItem, setRemoveLastItem ] = useState(false);
   const appConfig = useAppConfig();
+
   const toggleFileRobotVisibility = () => {
     setFileRobot((prev) => ({
       show: !prev.show,

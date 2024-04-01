@@ -1,3 +1,5 @@
+import rootConfig from "../../../root_config";
+
 const localeTexts = {
   404: {
     title: "404: Not Found",
@@ -6,6 +8,55 @@ const localeTexts = {
       text: "Learn More",
       url: "https://www.contentstack.com/docs/developers/developer-hub/about-ui-locations/",
     },
+  },
+  CustomFields: {
+    assetLimit: {
+      btnTooltip:
+        "You cannot choose assets as the maximum limit has been reached.",
+      notificationMsg:
+        "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
+    },
+    button: {
+      btnText: "Choose Asset(s)",
+    },
+    assetCard: {
+      hoverActions: {
+        preview: "Preview",
+        platformRedirect: `Open In ${rootConfig?.damEnv?.DAM_APP_NAME}`,
+        remove: "Remove",
+        drag: "Reorder",
+      },
+    },
+    AssetNotAddedText: "No assets have been added",
+    header: {
+      asset: {
+        singular: "Asset",
+        plural: "Assets",
+      },
+      changeView: "Change View",
+    },
+    listViewTable: {
+      thumbnailCol: "Asset Image",
+      assetNameCol: "Name",
+      type: "Type",
+    },
+    toolTip: {
+      thumbnail: "Thumbnail",
+      list: "List",
+      content: "Asset Image Not Available",
+    },
+  },
+  SelectorPage: {
+    title: rootConfig?.damEnv?.DAM_APP_NAME,
+  },
+  Warnings: {
+    incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
+  },
+  DeleteModal: {
+    header: "Remove Asset from Contentstack",
+    body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",
+    cancelButton: "Cancel",
+    confirmButton: "Remove",
   },
   AssetSidebarWidget: {
     title: "Asset Sidebar Widget",

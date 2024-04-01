@@ -2,6 +2,36 @@ export interface KeyValueObj {
   [key: string]: string;
 }
 
+export interface TypeAssetCard {
+  id: string;
+}
+
+export interface TypeSDKData {
+  config: any;
+  contentTypeConfig?: any;
+  location: any;
+  appSdkInitialized: boolean;
+}
+
+export interface TypePopupWindowDetails {
+  url: string;
+  title: string;
+  w: number;
+  h: number;
+}
+
+export interface TypeAssetList {
+  id: string;
+}
+
+export interface TypeCardContainer {
+  sensors: any;
+  onDragEnd: (event: any) => void;
+  onDragCancel: () => void;
+  onDragStart: ({ active }: any) => void;
+  activeId: string | null;
+}
+
 export type ChildProp = {
   children: string | JSX.Element | JSX.Element[];
 };

@@ -1,18 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useAppConfig } from "../../common/hooks/useAppConfig";
 import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import rootConfig from "../../root_config";
 import { TypeErrorFn } from "../../common/types/types";
 import Explorer from '@filerobot/explorer'
 import Filerobot from '@filerobot/core'
 import XHRUpload from '@filerobot/xhr-upload'
-import { isEmpty, isArray } from "lodash";
 import "@filerobot/core/dist/style.min.css";
 import "@filerobot/explorer/dist/style.min.css";
+import { isEmpty, isArray } from "lodash";
 
 let isScriptLoaded: any = false;
 let url: string = "";
-
 const SelectorPage: React.FC<any> = function () {
 
   const filerobot = useRef<any>(null);
@@ -24,7 +22,6 @@ const SelectorPage: React.FC<any> = function () {
   const [warningText, setWarningText] = useState<string>(
     ''
   );
-  const appConfig = useAppConfig();
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
   const damContainer = useRef(null);
 
@@ -93,18 +90,19 @@ const SelectorPage: React.FC<any> = function () {
       }
     }
   };
-
   const handleMessage = (event: MessageEvent) => {
     const { data } = event;
-
+    console.log(data);
     if (data?.config) {
       if (
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
-          const container = data?.config?.["container"] || "";
-          const securityTemplateId = data?.config?.["security_template_id"] || "";
-
+          // const container = data?.config?.["container"] || "";
+          // const securityTemplateId = data?.config?.["security_template_id"] || "";
+          
+          const container = "try";
+          const securityTemplateId = "SECU_B05FA1C3BA7A4BA88975CE2DC05CAF28";
           filerobot.current = Filerobot({
             securityTemplateId: securityTemplateId,
             container: container,
@@ -201,7 +199,7 @@ const SelectorPage: React.FC<any> = function () {
             {rootConfig?.damEnv?.IS_DAM_SCRIPT ? (
               // If Compact view script avaialble
               // eslint-disable-next-line
-             <></>
+              <div id="filerobot-widget"></div>
             ) : (
               // If there is no script custom component will be added
             //   rootConfig?.customSelectorComponent?.(
