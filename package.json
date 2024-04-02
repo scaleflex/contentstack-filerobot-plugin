@@ -9,6 +9,7 @@
   "dependencies": {
     "@babel/core": "^7.16.0",
     "@contentstack/app-sdk": "^2.0.0",
+    "@contentstack/venus-components": "^2.2.0",
     "@filerobot/core": "^3.31.16",
     "@filerobot/explorer": "^3.31.16",
     "@filerobot/xhr-upload": "^3.31.16",
