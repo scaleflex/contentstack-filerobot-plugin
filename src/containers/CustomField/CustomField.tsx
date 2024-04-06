@@ -92,17 +92,20 @@ const CustomFieldExtension = () => {
       })
       .use(XHRUpload) 
       .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {
-        // const fileArr:any[] = []
-        // files.forEach((selected: any) => {
-        //   const storeData = {
-        //         uuid: selected.file.uuid,
-        //         url: {
-        //           cdn: selected.file.url.cdn
-        //         }
-        //       }
-        //   fileArr.push(storeData)
-        // })
-        setFiles(files)
+        const fileArr:any[] = []
+        console.log(files)
+        files.forEach((selected: any) => {
+          const storeData = {
+                link: selected.link,
+                file:{
+                  name: selected.file.name,
+                  uuid: selected.file.uuid,
+                  type: selected.file.type
+                }
+              }
+          fileArr.push(storeData)
+        })
+        setFiles(fileArr)
         setRemoveLastItem(false)
       });
     }
