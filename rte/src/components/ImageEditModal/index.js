@@ -19,6 +19,7 @@ import utils from "../../common/utils";
 import constantValues from "../../common/constants/index";
 import rteConfig from "../../rte_config/index";
 import localeTexts from "../../common/locale/en-us/index";
+import "../styles.css";
 
 const ImageEditModal = function (props) {
   const { element, rte, icon, closeModal, path } = props;

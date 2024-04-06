@@ -10,6 +10,8 @@ import { isEmpty, isArray } from "lodash";
 import "./CustomField.css";
 import "@filerobot/core/dist/style.min.css";
 import "@filerobot/explorer/dist/style.min.css";
+import { Icon, cbModal } from "@contentstack/venus-components";
+import DeleteModal from "../../components/DeleteModal";
 
 const CustomFieldExtension = () => {
   const initialized = useRef(false)
@@ -38,7 +40,7 @@ const CustomFieldExtension = () => {
   };
 
   const removeImage = (uuid: any) => {
-    const filesArr = stateFileRobot.files.filter((file: any) => file.uuid != uuid)
+    const filesArr = stateFileRobot.files.filter((file: any) => file.file.uuid != uuid)
     if (filesArr.length == 0) setRemoveLastItem(true)
     setFieldData(filesArr)
   };
@@ -90,17 +92,17 @@ const CustomFieldExtension = () => {
       })
       .use(XHRUpload) 
       .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {
-        const fileArr:any[] = []
-        files.forEach((selected: any) => {
-          const storeData = {
-                uuid: selected.file.uuid,
-                url: {
-                  cdn: selected.file.url.cdn
-                }
-              }
-          fileArr.push(storeData)
-        })
-        setFiles(fileArr)
+        // const fileArr:any[] = []
+        // files.forEach((selected: any) => {
+        //   const storeData = {
+        //         uuid: selected.file.uuid,
+        //         url: {
+        //           cdn: selected.file.url.cdn
+        //         }
+        //       }
+        //   fileArr.push(storeData)
+        // })
+        setFiles(files)
         setRemoveLastItem(false)
       });
     }
@@ -121,14 +123,20 @@ const CustomFieldExtension = () => {
       key = function(item: any) { return item[property]; };
     }
     return Array.from(array.reduce(function(map: any, item: any) {
-      const k = key(item);
+      const k = key(item.file);
       if (!map.has(k)) map.set(k, item);
       return map;
     }, new Map()).values());
   }
 
+  const getTypeFile = (file: any) => {
+    const type = file.file.type.split("/");
+    return type[0]
+  }
+
   useEffect(() => {
     const filesArr = getUnique(stateFileRobot.files.concat(stateFiles), 'uuid');
+    console.log(filesArr)
     if (filesArr && filesArr.length > 0) setFieldData(filesArr)
   },[stateFiles]);
 
@@ -142,9 +150,19 @@ const CustomFieldExtension = () => {
       <div className="filerobot-images">
       {
         stateFileRobot.files && stateFileRobot.files.length > 0  ? stateFileRobot.files.map((file: any, index: number) => (
-          <div key={file.uuid} className="filerobot-image">
-            <img src={file.url.cdn} />
-            <div onClick={() => removeImage(file.uuid)} className="remove-image-btn">x</div>
+          <div key={file.file.uuid} className="filerobot-image">
+            { 
+              getTypeFile(file) == 'image' ? ( <div className="file-content"><img src={file.link} /> </div>) : ( <div className="file-content"><div className="file-content-type">{file.file.type}</div></div>)
+            }
+           
+            <div onClick={() =>  cbModal({
+            component: (props: any) => (
+              <DeleteModal remove={removeImage} id={file.file.uuid} name={file.file.name} {...props} />
+            ),
+            modalProps: {
+              size: "xsmall",
+            }
+          })} className="remove-image-btn">x</div>
           </div>
         )) : null
       }
