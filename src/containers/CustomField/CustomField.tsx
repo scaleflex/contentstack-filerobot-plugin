@@ -39,11 +39,11 @@ const CustomFieldExtension = () => {
     }));
   };
 
-  const removeImage = useCallback((uuid: any) => {
+  const removeImage = (uuid: any) => {
     const filesArr = stateFileRobot.files.filter((file: any) => file.file.uuid != uuid)
     if (filesArr.length == 0) setRemoveLastItem(true)
     setFieldData(filesArr)
-  }, [stateFileRobot.files]);
+  };
 
   const removeAllImage = () => {
     setFieldData([])
