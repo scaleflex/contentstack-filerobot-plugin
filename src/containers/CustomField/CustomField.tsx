@@ -137,6 +137,10 @@ const CustomFieldExtension = () => {
     return type[0]
   }
 
+  const fixHeight = (url: string) => {
+    return url + '&h=200'
+  }
+
   useEffect(() => {
     const filesArr = getUnique(stateFileRobot.files.concat(stateFiles), 'uuid');
     if (filesArr && filesArr.length > 0) setFieldData(filesArr)
@@ -154,7 +158,7 @@ const CustomFieldExtension = () => {
         stateFileRobot.files && stateFileRobot.files.length > 0  ? stateFileRobot.files.map((file: any, index: number) => (
           <div key={file.file.uuid} className="filerobot-image">
             { 
-              getTypeFile(file) == 'image' ? ( <div className="file-content"><img src={file.link} /> </div>) : ( <div className="file-content"><div className="file-content-type">{file.file.type}</div></div>)
+              getTypeFile(file) == 'image' ? ( <div className="file-content"><img src={fixHeight(file.link)} /> </div>) : ( <div className="file-content"><div className="file-content-type">{file.file.type}</div></div>)
             }
            
             <div onClick={() =>  cbModal({
