@@ -1,20 +1,18 @@
-import React, { useCallback, useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useAppConfig } from "../../common/hooks/useAppConfig";
 import Explorer from '@filerobot/explorer'
 import Filerobot from '@filerobot/core'
 import XHRUpload from '@filerobot/xhr-upload'
 import { useCustomField } from "../../common/hooks/useCustomField";
-import { useEntry } from "../../common/hooks/useEntry";
 import { FileRobotData } from "../../common/types/types";
 import { isEmpty, isArray } from "lodash";
 import "./CustomField.css";
 import "@filerobot/core/dist/style.min.css";
 import "@filerobot/explorer/dist/style.min.css";
-import { Icon, cbModal } from "@contentstack/venus-components";
+import { cbModal } from "@contentstack/venus-components";
 import DeleteModal from "../../components/DeleteModal";
 
 const CustomFieldExtension = () => {
-  const initialized = useRef(false)
   const filerobot = useRef<any>(null);
   const { customField, setFieldData }: any = useCustomField();
   const [ stateFileRobot, setFileRobot ] = useState<FileRobotData>({
@@ -45,10 +43,10 @@ const CustomFieldExtension = () => {
     setFieldData(filesArr)
   };
 
-  const removeAllImage = () => {
-    setFieldData([])
-    setRemoveLastItem(true)
-  };
+  // const removeAllImage = () => {
+  //   setFieldData([])
+  //   setRemoveLastItem(true)
+  // };
 
   useEffect(() => {
     if (!isEmpty(appConfig) && appConfig !== null) {
@@ -91,7 +89,7 @@ const CustomFieldExtension = () => {
         },
       })
       .use(XHRUpload) 
-      .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {
+      .on('export', function (files) {
         const fileArr:any[] = []
         console.log(files)
         files.forEach((selected: any) => {
@@ -155,7 +153,7 @@ const CustomFieldExtension = () => {
       </div>
       <div className="filerobot-images">
       {
-        stateFileRobot.files && stateFileRobot.files.length > 0  ? stateFileRobot.files.map((file: any, index: number) => (
+        stateFileRobot.files && stateFileRobot.files.length > 0  ? stateFileRobot.files.map((file: any  ) => (
           <div key={file.file.uuid} className="filerobot-image">
             { 
               getTypeFile(file) == 'image' ? ( <div className="file-content"><img src={fixHeight(file.link)} /> </div>) : ( <div className="file-content"><div className="file-content-type">{file.file.type}</div></div>)
