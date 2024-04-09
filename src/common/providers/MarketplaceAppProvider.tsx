@@ -1,10 +1,10 @@
 import React, { useEffect, useState,useMemo } from "react";
 import ContentstackAppSDK from "@contentstack/app-sdk";
-import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
+// import UiLocation from "@contentstack/app-sdk/dist/src/uiLocation";
 import { isNull } from "lodash";
 import { Props } from "../types/types";
-import { KeyValueObj } from "../types/types";
-import { AppFailed } from "../../components/AppFailed";
+// import { KeyValueObj } from "../types/types";
+// import { AppFailed } from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../contexts/marketplaceContext";
 
 type ProviderProps = {

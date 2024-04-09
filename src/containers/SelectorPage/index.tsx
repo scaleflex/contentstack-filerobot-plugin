@@ -7,7 +7,6 @@ import Filerobot from '@filerobot/core'
 import XHRUpload from '@filerobot/xhr-upload'
 import "@filerobot/core/dist/style.min.css";
 import "@filerobot/explorer/dist/style.min.css";
-import { isEmpty, isArray } from "lodash";
 
 let isScriptLoaded: any = false;
 let url: string = "";
