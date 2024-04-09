@@ -25,7 +25,7 @@ const getAssetType = (asset: any) => {
   else if (type == 'video') return 'Video'
   else if (type == 'application' && subType == 'pdf') return 'Pdf'
   else if (type == 'audio') return 'Audio'
-  else return 'Image'
+  else return 'Document'
 
   /* possible return values ==> Document, Image, Pdf, Archive, Video, Audio */
 };

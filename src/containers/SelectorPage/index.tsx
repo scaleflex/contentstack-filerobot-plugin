@@ -92,17 +92,13 @@ const SelectorPage: React.FC<any> = function () {
   };
   const handleMessage = (event: MessageEvent) => {
     const { data } = event;
-    console.log(data);
     if (data?.config) {
       if (
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
-          // const container = data?.config?.["container"] || "";
-          // const securityTemplateId = data?.config?.["security_template_id"] || "";
-          
-          const container = "try";
-          const securityTemplateId = "SECU_B05FA1C3BA7A4BA88975CE2DC05CAF28";
+          const container = data?.config?.["container"] || "";
+          const securityTemplateId = data?.config?.["security_template_id"] || "";  
           filerobot.current = Filerobot({
             securityTemplateId: securityTemplateId,
             container: container,
@@ -139,7 +135,26 @@ const SelectorPage: React.FC<any> = function () {
           })
           .use(XHRUpload) 
           .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {  
-            successFn(files)
+            const fileArr:any[] = []
+            files.forEach((selected: any) => {
+              const storeData = {
+                    link: selected.link,
+                    file:{
+                      name: selected.file.name,
+                      uuid: selected.file.uuid,
+                      type: selected.file.type,
+                      info: {
+                        img_w: selected.file.info.img_w,
+                        img_h: selected.file.info.img_h,
+                      },
+                      size: {
+                        bytes: selected.file.size.bytes
+                      }
+                    }
+                  }
+              fileArr.push(storeData)
+            })
+            successFn(fileArr)
           });
       
           setConfig(data?.config);

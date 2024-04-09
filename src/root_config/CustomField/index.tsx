@@ -12,21 +12,30 @@ import DamEnvVariables from "../DamEnv";
 import utils from "../utils";
 
 const filterAssetData = (assets: any[]) => {
-  const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
-    // Enter your code for filteration of assets to the specified format
-    ({
-      id: "",
-      type: "",
-      name: "",
-      width: "",
-      height: "",
-      size: "", // add size in bytes as string eg.'416246'
-      thumbnailUrl: "",
-      previewUrl: "", // add this parameter if you want "Preview" in tooltip action items
-      platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
-    })
-  );
-  return filterAssetArray;
+    const getThumbnailUrl = (url: string) => {
+      return url + '&h=200'
+    }
+    const getType = (typeString: string) => {
+      const typeArr = typeString.split("/");
+      return typeArr[0];
+    }
+
+    const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
+      // Enter your code for filteration of assets to the specified format
+      ({
+        id: asset.file.uuid,
+        type: getType(asset.file.type),
+        name: asset.file.name,
+        width: asset.file.info.img_w,
+        height: asset.file.info.img_h,
+        size: asset.file.size.bytes      , // add size in bytes as string eg.'416246'
+        thumbnailUrl: getThumbnailUrl(asset.link),
+        previewUrl: asset.link, // add this parameter if you want "Preview" in tooltip action items
+        platformUrl: "", // add this parameter if you want "Open In DAM" in tooltip action items
+      })
+    );
+    return filterAssetArray;
+  
 };
 
 const handleConfigtoSelectorPage = (

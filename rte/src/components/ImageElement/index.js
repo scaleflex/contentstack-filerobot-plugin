@@ -9,7 +9,7 @@ import DeleteModal from "../DeleteModal";
 import utils from "../../common/utils";
 import rteConfig from "../../rte_config/index";
 import localeTexts from "../../common/locale/en-us";
-import "../styles.css";
+import "../styles.scss";
 
 const ImageElement = function ({
   attributes,

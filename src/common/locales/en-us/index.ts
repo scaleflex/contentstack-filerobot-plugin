@@ -17,7 +17,7 @@ const localeTexts = {
         "The maximum asset limit has been reached! You cannot add more assets than the preconfigured limit.",
     },
     button: {
-      btnText: "Choose Asset(s)",
+      btnText: "Filerobot",
     },
     assetCard: {
       hoverActions: {
