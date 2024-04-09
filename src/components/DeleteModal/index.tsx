@@ -8,7 +8,6 @@ import {
 } from "@contentstack/venus-components";
 import localeTexts from "../../common/locales/en-us";
 import { Props } from "../../common/types/types";
-import './index.css';
 
 const DeleteModal: React.FC<Props> = function ({
   remove,
