@@ -4,7 +4,7 @@ import { MarketplaceAppProvider } from "../../common/providers/MarketplaceAppPro
 import { Route, Routes } from "react-router-dom";
 import { EntrySidebarExtensionProvider } from "../../common/providers/EntrySidebarExtensionProvider";
 import { AppConfigurationExtensionProvider } from "../../common/providers/AppConfigurationExtensionProvider";
-import { CustomFieldExtensionProvider } from "../../common/providers/CustomFieldExtensionProvider";
+//import { CustomFieldExtensionProvider } from "../../common/providers/CustomFieldExtensionProvider";
 import FieldModifierExtension from "../FieldModifier/FieldModifier";
 import CustomFieldLoader from "../../components/Loaders/CustomFieldLoader";
 import CustomFieldProvider from "../../common/providers/CustomFieldProvider";

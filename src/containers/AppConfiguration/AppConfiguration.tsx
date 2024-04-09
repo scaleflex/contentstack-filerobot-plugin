@@ -4,7 +4,7 @@ import localeTexts from "../../common/locales/en-us/index";
 import parse from "html-react-parser";
 import styles from "./AppConfiguration.module.css";
 import { useInstallationData } from "../../common/hooks/useInstallationData";
-import Tooltip from "../Tooltip/Tooltip";
+//import Tooltip from "../Tooltip/Tooltip";
 
 const AppConfigurationExtension: React.FC = () => {
   const { installationData, setInstallationData } = useInstallationData();

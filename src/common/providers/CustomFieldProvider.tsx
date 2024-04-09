@@ -1,6 +1,6 @@
 import React, {
   useCallback,
-  useContext,
+  // useContext,
   useEffect,
   useMemo,
   useState,
@@ -10,7 +10,7 @@ import CustomFieldContext from "../contexts/CustomFieldContext";
 import { TypeAsset, TypeSDKData, ChildProp } from "../types/types";
 import rootConfig from "../../root_config";
 import {useAppLocation} from "../hooks/useAppLocation";
-import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
+//import { MarketplaceAppContext } from "../contexts/MarketplaceAppContext";
 import { useAppConfig } from "../../common/hooks/useAppConfig";
 
 declare global {
