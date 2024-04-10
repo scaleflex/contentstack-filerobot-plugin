@@ -113,12 +113,12 @@ const AppConfigurationExtension: React.FC = () => {
 
         </div>
 
-        <div className={`${styles.locationDescription}`}>
+        {/* <div className={`${styles.locationDescription}`}>
           <p className={`${styles.locationDescriptionText}`}>{parse(localeTexts.ConfigScreen.body)}</p>
           <a target="_blank" rel="noreferrer" href={localeTexts.ConfigScreen.button.url}>
             <span className={`${styles.locationDescriptionLink}`}>{localeTexts.ConfigScreen.button.text}</span>
           </a>
-        </div>
+        </div> */}
       </div>
     </div>
   );
