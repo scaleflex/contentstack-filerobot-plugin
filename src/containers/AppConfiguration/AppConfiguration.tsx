@@ -1,7 +1,6 @@
 import React, { useRef } from "react";
 import Icon from "../../assets/GearSix.svg";
 import localeTexts from "../../common/locales/en-us/index";
-import parse from "html-react-parser";
 import styles from "./AppConfiguration.module.css";
 import { useInstallationData } from "../../common/hooks/useInstallationData";
 //import Tooltip from "../Tooltip/Tooltip";
