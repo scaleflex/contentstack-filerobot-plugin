@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useState } from "react";
 /* Import ContentStack modules */
 import { Button, Notification, Tooltip } from "@contentstack/venus-components";
 /* Import our CSS */
-import '@contentstack/venus-components/build/main.css';
 import "./styles.css";
 /* Import our modules */
 import localeTexts from "../../common/locales/en-us";

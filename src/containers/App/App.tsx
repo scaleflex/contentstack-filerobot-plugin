@@ -5,7 +5,10 @@ import { Route, Routes } from "react-router-dom";
 import { AppConfigurationExtensionProvider } from "../../common/providers/AppConfigurationExtensionProvider";
 import CustomFieldLoader from "../../components/Loaders/CustomFieldLoader";
 import CustomFieldProvider from "../../common/providers/CustomFieldProvider";
-
+import SelectorPageLoader from "../../components/Loaders/SelectorPage";
+import ConfigLoader from "../../components/Loaders/ConfigLoader";
+/* Import node module CSS */
+import "@contentstack/venus-components/build/main.css";
 // import FieldModifierExtension from "../FieldModifier/FieldModifier";
 // import { CustomFieldExtensionProvider } from "../../common/providers/CustomFieldExtensionProvider";
 // import { EntrySidebarExtensionProvider } from "../../common/providers/EntrySidebarExtensionProvider";
@@ -20,7 +23,7 @@ const AppConfigurationExtension = React.lazy(() => import("../AppConfiguration/A
 const SelectorPage = React.lazy(() => import("../SelectorPage"));
 const CustomField = React.lazy(() => import("../CustomField"));
 const PageNotFound = React.lazy(() => import("../404/404"));
-const DefaultPage = React.lazy(() => import("../index"));
+//const DefaultPage = React.lazy(() => import("../index"));
 // const AssetSidebarExtension = React.lazy(() => import("../AssetSidebarWidget/AssetSidebar"));
 // const StackDashboardExtension = React.lazy(() => import("../DashboardWidget/StackDashboard"));
 // const EntrySidebarExtension = React.lazy(() => import("../SidebarWidget/EntrySidebar"));
@@ -31,7 +34,7 @@ function App() {
     <ErrorBoundary>
       <MarketplaceAppProvider>
         <Routes>
-          <Route path="/" element={<DefaultPage />} />
+          <Route path="/" element={<></>} />
           <Route
             path="/custom-field"
             element={
@@ -45,7 +48,7 @@ function App() {
           <Route
                 path="/selector-page"
                 element={
-                  <Suspense>
+                  <Suspense fallback={<SelectorPageLoader />}>
                     <SelectorPage />
                   </Suspense>
                 }
@@ -63,7 +66,7 @@ function App() {
           <Route
             path="/app-configuration"
             element={
-              <Suspense>
+              <Suspense fallback={<ConfigLoader />}>
                 <AppConfigurationExtensionProvider>
                   <AppConfigurationExtension />
                 </AppConfigurationExtensionProvider>
