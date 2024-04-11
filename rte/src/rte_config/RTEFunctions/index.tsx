@@ -13,7 +13,7 @@ const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
 const getDisplayUrl = (asset: any) => {
-  return asset.link;
+  return asset.link+'&w=700';
   /* returns the display url of the asset. Return Type = "String" */
 };
 
