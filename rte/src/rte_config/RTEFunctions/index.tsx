@@ -13,7 +13,7 @@ const PREVIEW_ICON = "Eye";
 const NEWTAB_ICON = "NewTab";
 
 const getDisplayUrl = (asset: any) => {
-  if (asset.file.img_w < 700)
+  if (asset.file.info.img_w < 700)
     return asset.link;
   else 
     return asset.link+'&w=700';
