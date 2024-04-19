@@ -1,0 +1,92 @@
+.config-wrapper {
+  margin: 0;
+}
+.config-wrapper .TextInput__input {
+  width: 97% !important;
+}
+.config-wrapper .Field {
+  padding: 30px 20px;
+  margin: 0;
+}
+.config-wrapper .FieldLabel {
+  font-weight: 700 !important;
+  font-size: 12px !important;
+  line-height: 16.2px !important;
+}
+.config-wrapper .FieldLabel + div {
+  display: inline-block;
+}
+.config-wrapper .tippy-wrapper {
+  margin-right: 10px;
+}
+.config-wrapper .radio-wrapper {
+  padding: 20px 10px;
+}
+.config-wrapper .radio-button {
+  margin-right: 20px;
+}
+.config-wrapper .toggle-save-response {
+  padding: 20px 10px;
+}
+.config-wrapper .Radio-wrapper {
+  padding: 0 10px;
+  margin-bottom: 0;
+}
+.config-wrapper .Radio-wrapper .Radio {
+  margin-right: 20px;
+}
+.config-wrapper .InstructionText {
+  visibility: visible;
+}
+.config-wrapper .dam-keys {
+  padding-top: 0;
+  margin-left: 0;
+}
+.config-wrapper .Select__value-container > div:nth-child(-n + 4) {
+  pointer-events: none;
+  cursor: alias;
+}
+.config-wrapper .Select__value-container > div:nth-child(-n + 4) .Select__multi-value__remove {
+  display: unset;
+  display: none !important;
+}
+.config-wrapper .Select__option--is-disabled {
+  cursor: not-allowed;
+}
+.config-wrapper .Select__option--is-disabled .Checkbox input {
+  background-color: -internal-light-dark(rgba(239, 239, 239, 0.3), rgba(59, 59, 59, 0.3));
+  color: -internal-light-dark(#545454, #aaa);
+  border-color: rgba(118, 118, 118, 0.3);
+}
+.config-wrapper .Select {
+  min-width: 300px !important;
+  max-width: unset !important;
+}
+.config-wrapper .dam-keys-select {
+  min-width: 200px !important;
+}
+.config-wrapper .Select__menu {
+  max-width: unset;
+  min-width: 150px !important;
+}
+.config-wrapper .Select__menu .Select__menu-list {
+  max-height: 250px !important;
+}
+.config-wrapper .Select__add-option {
+  cursor: pointer;
+  color: #475161 !important;
+  font-size: 14px;
+}
+.config-wrapper .Select__add-option svg {
+  margin: 0 15px;
+}
+.note-p {
+  display: inline-block !important;
+  margin: 5px 5px 0 0;
+}
+.modal_toast_message {
+  bottom: 60px !important;
+}
+.json-field .Radio-wrapper {
+  margin: 20px 0;
+}

@@ -30,7 +30,7 @@
 						"uid": "65e997d0f99c8c82d5c526cc",
 						"path": "/#/stack-dashboard",
 						"signed": false,
-						"enabled": true,
+						"enabled": false,
 						"default_width": "half"
 					}
 				]
@@ -56,7 +56,7 @@
 						"uid": "65e997d0f99c8c82d5c526ce",
 						"path": "/#/entry-sidebar",
 						"signed": false,
-						"enabled": true
+						"enabled": false
 					}
 				]
 			},
@@ -67,7 +67,7 @@
 						"uid": "65e997d0f99c8c82d5c526cf",
 						"path": "/#/full-page",
 						"signed": false,
-						"enabled": true
+						"enabled": false
 					}
 				]
 			},

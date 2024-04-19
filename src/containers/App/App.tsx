@@ -7,6 +7,8 @@ import CustomFieldLoader from "../../components/Loaders/CustomFieldLoader";
 import CustomFieldProvider from "../../common/providers/CustomFieldProvider";
 import SelectorPageLoader from "../../components/Loaders/SelectorPage";
 import ConfigLoader from "../../components/Loaders/ConfigLoader";
+import AppConfigProvider from "../../common/providers/AppConfigProvider";
+
 /* Import node module CSS */
 import "@contentstack/venus-components/build/main.css";
 // import FieldModifierExtension from "../FieldModifier/FieldModifier";
@@ -27,7 +29,8 @@ const PageNotFound = React.lazy(() => import("../404/404"));
 // const AssetSidebarExtension = React.lazy(() => import("../AssetSidebarWidget/AssetSidebar"));
 // const StackDashboardExtension = React.lazy(() => import("../DashboardWidget/StackDashboard"));
 // const EntrySidebarExtension = React.lazy(() => import("../SidebarWidget/EntrySidebar"));
-// const FullPageExtension = React.lazy(() => import("../FullPage/FullPage"));
+const FullPageExtension = React.lazy(() => import("../FullPage/FullPage"));
+const ConfigScreen = React.lazy(() => import("../ConfigScreen"));
 
 function App() {
   return (
@@ -63,13 +66,23 @@ function App() {
               </Suspense>
             }
           /> */}
-          <Route
+          {/* <Route
             path="/app-configuration"
             element={
               <Suspense fallback={<ConfigLoader />}>
                 <AppConfigurationExtensionProvider>
                   <AppConfigurationExtension />
                 </AppConfigurationExtensionProvider>
+              </Suspense>
+            }
+          /> */}
+          <Route
+            path="/app-configuration"
+            element={
+              <Suspense fallback={<ConfigLoader />}>
+                <AppConfigProvider>
+                  <ConfigScreen />
+                </AppConfigProvider>
               </Suspense>
             }
           />

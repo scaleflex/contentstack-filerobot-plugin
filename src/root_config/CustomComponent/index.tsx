@@ -5,8 +5,7 @@ interface TypeCustomComponent {}
 const CustomComponent: React.FC<TypeCustomComponent> = function () {
   return (
     <div className="config-custom-component">
-      Custom Component - This is a custom component and can be modified using
-      root_config
+      <center><a href="https://www.scaleflex.com/request-a-demo">Register for a demo</a> if you do not already have a Filerobot account.</center>
     </div>
   );
 };

@@ -18,52 +18,62 @@ const configureConfigScreen = () =>
   5. If values are stored in serverConfig then those values will not be available to other UI locations
   6. Supported type options are textInputFields, radioInputFields, selectInputFields */
   ({
-    textField: {
+    security_template_id: {
       type: "textInputFields",
-      labelText: "DAM Text Input",
-      helpText: "DAM Text Input Helptext",
-      placeholderText: "DAM Text Input Placeholder",
-      instructionText: "DAM Text Input Instruction Text",
-      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
-      saveInConfig: false,
-      saveInServerConfig: true,
-    },
-    selectField: {
-      type: "selectInputFields",
-      labelText: "DAM Select Input",
-      helpText: "DAM Select Input Helptext",
-      placeholderText: "DAM Select Input Placeholder",
-      instructionText: "DAM Select Input Instruction Text",
-      options: [
-        { label: "option 1", value: "option1" },
-        { label: "option 2", value: "option2" },
-        { label: "option 3", value: "option3" },
-        { label: "option 4", value: "option4" },
-        { label: "option 5", value: "option5" },
-      ],
-      defaultSelectedOption: "option5",
+      labelText: "Security Template Id",
+      helpText: "Security template ID, found in the Developers top menu",
+      placeholderText: "",
+      instructionText: "",
+      inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: true,
       saveInServerConfig: false,
     },
-    radioField: {
-      type: "radioInputFields",
-      labelText: "DAM Radio Input",
-      helpText: "DAM Radio Input Helptext",
-      instructionText: "DAM Radio Input Instruction Text",
-      options: [
-        {
-          label: "Single Select",
-          value: "SingleSelect",
-        },
-        {
-          label: "Multi Select",
-          value: "MultiSelect",
-        },
-      ],
-      defaultSelectedOption: "MultiSelect",
+    container: {
+      type: "textInputFields",
+      labelText: "Container",
+      helpText: "Your Filerobot token from the Asset Hub interface",
+      placeholderText: "",
+      instructionText: "",
+      inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: true,
       saveInServerConfig: false,
     },
+    // selectField: {
+    //   type: "selectInputFields",
+    //   labelText: "DAM Select Input",
+    //   helpText: "DAM Select Input Helptext",
+    //   placeholderText: "DAM Select Input Placeholder",
+    //   instructionText: "DAM Select Input Instruction Text",
+    //   options: [
+    //     { label: "option 1", value: "option1" },
+    //     { label: "option 2", value: "option2" },
+    //     { label: "option 3", value: "option3" },
+    //     { label: "option 4", value: "option4" },
+    //     { label: "option 5", value: "option5" },
+    //   ],
+    //   defaultSelectedOption: "option5",
+    //   saveInConfig: true,
+    //   saveInServerConfig: false,
+    // },
+    // radioField: {
+    //   type: "radioInputFields",
+    //   labelText: "DAM Radio Input",
+    //   helpText: "DAM Radio Input Helptext",
+    //   instructionText: "DAM Radio Input Instruction Text",
+    //   options: [
+    //     {
+    //       label: "Single Select",
+    //       value: "SingleSelect",
+    //     },
+    //     {
+    //       label: "Multi Select",
+    //       value: "MultiSelect",
+    //     },
+    //   ],
+    //   defaultSelectedOption: "MultiSelect",
+    //   saveInConfig: true,
+    //   saveInServerConfig: false,
+    // },
   });
 
 const customConfigComponent = (
@@ -99,7 +109,7 @@ const customWholeJson = () => {
 const rootConfigScreen: TypeRootConfigSreen = {
   configureConfigScreen,
   customConfigComponent,
-  customWholeJson,
+  // customWholeJson,
 };
 
 export default rootConfigScreen;

@@ -6,11 +6,35 @@ export interface TypeAssetCard {
   id: string;
 }
 
+export interface TypeAppSdkConfigState {
+  configuration: Props;
+  serverConfiguration: Props;
+}
+
+export interface TypeRadioOption {
+  fieldName: string;
+  mode: TypeOption;
+  index: number;
+  radioOption: TypeOption;
+  updateRadioOptions: Function;
+}
+
+export interface TypeConfigComponent {
+  objKey: string;
+  objValue: any;
+  updateConfig?: Function;
+}
+
 export interface TypeSDKData {
   config: any;
   contentTypeConfig?: any;
   location: any;
   appSdkInitialized: boolean;
+}
+
+export interface TypeOption {
+  label: string;
+  value: string;
 }
 
 export interface TypePopupWindowDetails {
