@@ -24,7 +24,7 @@ const configureConfigScreen = () =>
       helpText: "Security template ID, found in the Developers top menu",
       placeholderText: "",
       instructionText: "",
-      inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: true,
       saveInServerConfig: false,
     },
@@ -34,7 +34,7 @@ const configureConfigScreen = () =>
       helpText: "Your Filerobot token from the Asset Hub interface",
       placeholderText: "",
       instructionText: "",
-      inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
       saveInConfig: true,
       saveInServerConfig: false,
     },

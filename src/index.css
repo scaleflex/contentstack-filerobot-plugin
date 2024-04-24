@@ -344,3 +344,7 @@ not used in app config field , Sidebar
   white-space: pre;
   text-align: left;
 }
+
+#filerobot-widget, .filerobot-Root {
+  height: 100vh;
+}
