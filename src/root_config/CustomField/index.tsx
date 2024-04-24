@@ -23,7 +23,7 @@ const filterAssetData = (assets: any[]) => {
     const filterAssetArray: TypeAsset[] = assets?.map((asset) =>
       // Enter your code for filteration of assets to the specified format
       ({
-        id: asset.file.uuid,
+        id: asset.file.uid,
         type: getType(asset.file.type),
         name: asset.file.name,
         width: asset.file.info.img_w,
