@@ -3,7 +3,7 @@ import { TypeRootDamEnv } from "../../common/types/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
   DAM_APP_NAME: "Filerobot",
-  ASSET_UNIQUE_ID: "uuid",
+  ASSET_UNIQUE_ID: "uid",
   SELECTOR_PAGE_LOGO: Logo,
   CONFIG_FIELDS: ['container', 'security_template_id'],
   IS_DAM_SCRIPT: false,

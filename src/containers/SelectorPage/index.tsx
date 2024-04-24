@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from "react";
 import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import rootConfig from "../../root_config";
+import { v4 } from "uuid";
 import { TypeErrorFn } from "../../common/types/types";
 import Explorer from '@filerobot/explorer'
 import Filerobot from '@filerobot/core'
@@ -141,6 +142,7 @@ const SelectorPage: React.FC<any> = function () {
                     file:{
                       name: selected.file.name,
                       uuid: selected.file.uuid,
+                      uid: v4()?.split("-")?.join(""),
                       type: selected.file.type,
                       info: {
                         img_w: selected.file.info.img_w,
