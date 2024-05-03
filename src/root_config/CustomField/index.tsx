@@ -17,6 +17,7 @@ const filterAssetData = (assets: any[]) => {
     }
     const getType = (typeString: string) => {
       const typeArr = typeString.split("/");
+      if (typeArr[0] == 'application' && typeArr[1] == 'pdf') return 'pdf';
       return typeArr[0];
     }
 

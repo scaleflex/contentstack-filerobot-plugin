@@ -34,7 +34,7 @@ const getAssetType = (asset: any) => {
 };
 
 const getViewIconforTooltip = (type: string) => {
-  return PREVIEW_ICON
+  if ([ASSET_IMAGE_TYPE, ASSET_VIDEO_TYPE, ASSET_AUDIO_TYPE].includes(type)) return PREVIEW_ICON
 };
 
 const getSelectorWindowUrl = (config: any) => {
