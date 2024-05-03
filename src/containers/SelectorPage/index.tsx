@@ -3,9 +3,13 @@ import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
 import rootConfig from "../../root_config";
 import { v4 } from "uuid";
 import { TypeErrorFn } from "../../common/types/types";
+import WarningMessage from "../../components/WarningMessage";
 import Explorer from '@filerobot/explorer'
 import Filerobot from '@filerobot/core'
 import XHRUpload from '@filerobot/xhr-upload'
+import localeTexts from "../../common/locales/en-us/index";
+import { isEmpty, isNull } from "lodash";
+import "./style.css";
 import "@filerobot/core/dist/style.min.css";
 import "@filerobot/explorer/dist/style.min.css";
 
@@ -20,7 +24,7 @@ const SelectorPage: React.FC<any> = function () {
   const [config, setConfig] = useState<any>();
   // state for warning text to be used when error
   const [warningText, setWarningText] = useState<string>(
-    ''
+    localeTexts.Warnings.incorrectConfig
   );
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
   const damContainer = useRef(null);
@@ -39,7 +43,7 @@ const SelectorPage: React.FC<any> = function () {
   // function to set error
   const setError = ({
     isErr = false,
-    errorText = 'errorText',
+    errorText = localeTexts.Warnings.incorrectConfig,
   }: TypeErrorFn) => {
     setIsErrorPresent(isErr);
     if (errorText) setWarningText(errorText);
@@ -97,70 +101,77 @@ const SelectorPage: React.FC<any> = function () {
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
+          
           const container = data?.config?.["container"] || "";
           const securityTemplateId = data?.config?.["security_template_id"] || "";  
-          filerobot.current = Filerobot({
-            securityTemplateId: securityTemplateId,
-            container: container,
-            dev: false,
-          })
-          .use(Explorer, {
-          config: {
-              limit: 50,
-              tagging: {
-              language: "en",
-              confidence: 60,
-              limit: 10,
-              }
-          },
-          target: "#filerobot-widget",
-          inline: true,
-          width: "100%",
-          height: "100%",
-          dismissUrlPathQueryUpdate: true,
-          showDetailsView: false,
-          showFolderTree: true,
-          floaty: false,
-          disableDownloadButton: true,
-          hideDownloadButtonIcon: true,
-          preventDownloadDefaultBehavior: true,
-          resetAfterClose: true,
-              // reference https://github.com/scaleflex/commercetools-filerobot-plugin/blob/master/src/components/filerobot/filerobot-dam.jsx
-              locale: {
-              strings: {
-                  mutualizedExportButtonLabel: 'Insert',
-                  mutualizedDownloadButton: 'Insert',
-              }
-          },
-          })
-          .use(XHRUpload) 
-          .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {  
-            const fileArr:any[] = []
-            files.forEach((selected: any) => {
-              const storeData = {
-                    link: selected.link,
-                    file:{
-                      name: selected.file.name,
-                      uuid: selected.file.uuid,
-                      uid: v4()?.split("-")?.join(""),
-                      type: selected.file.type,
-                      info: {
-                        img_w: selected.file.info.img_w,
-                        img_h: selected.file.info.img_h,
-                      },
-                      size: {
-                        bytes: selected.file.size.bytes
+
+          if (isEmpty(container) || isEmpty(securityTemplateId))
+          {
+            setIsErrorPresent(true)
+          } else {
+            filerobot.current = Filerobot({
+              securityTemplateId: securityTemplateId,
+              container: container,
+              dev: false,
+            })
+            .use(Explorer, {
+            config: {
+                limit: 50,
+                tagging: {
+                language: "en",
+                confidence: 60,
+                limit: 10,
+                }
+            },
+            target: "#filerobot-widget",
+            inline: true,
+            width: "100%",
+            height: "100%",
+            dismissUrlPathQueryUpdate: true,
+            showDetailsView: false,
+            showFolderTree: true,
+            floaty: false,
+            disableDownloadButton: true,
+            hideDownloadButtonIcon: true,
+            preventDownloadDefaultBehavior: true,
+            resetAfterClose: true,
+                // reference https://github.com/scaleflex/commercetools-filerobot-plugin/blob/master/src/components/filerobot/filerobot-dam.jsx
+                locale: {
+                strings: {
+                    mutualizedExportButtonLabel: 'Insert',
+                    mutualizedDownloadButton: 'Insert',
+                }
+            },
+            })
+            .use(XHRUpload) 
+            .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {  
+              const fileArr:any[] = []
+              files.forEach((selected: any) => {
+                const storeData = {
+                      link: selected.link,
+                      file:{
+                        name: selected.file.name,
+                        uuid: selected.file.uuid,
+                        uid: v4()?.split("-")?.join(""),
+                        type: selected.file.type,
+                        info: {
+                          img_w: selected.file.info.img_w,
+                          img_h: selected.file.info.img_h,
+                        },
+                        size: {
+                          bytes: selected.file.size.bytes
+                        }
                       }
                     }
-                  }
-              fileArr.push(storeData)
-            })
-            successFn(fileArr)
-          });
-      
-          setConfig(data?.config);
-          compactViewImplementation(data?.config, data?.selectedIds);
-          setSelectedAssetIds(data?.selectedIds);
+                fileArr.push(storeData)
+              })
+              successFn(fileArr)
+            });
+        
+            setConfig(data?.config);
+            compactViewImplementation(data?.config, data?.selectedIds);
+            setSelectedAssetIds(data?.selectedIds);
+          }
       }
     }
   };
@@ -200,6 +211,25 @@ const SelectorPage: React.FC<any> = function () {
   return (
     <div className="selector-page-wrapper" data-testid="selector-wrapper">
       <div
+        className="selector-page-header flex FullPage_Modal_Header"
+        data-testid="selector-header"
+      >
+        <div>
+          <div
+            className="selector-page-header-image"
+            data-testid="selector-logo"
+          >
+            <img
+              src={rootConfig?.damEnv?.SELECTOR_PAGE_LOGO}
+              alt={`${localeTexts.SelectorPage.title} Logo`}
+            />
+          </div>
+          <span data-testid="selector-title">
+            {localeTexts.SelectorPage.title}
+          </span>
+        </div>
+      </div>
+      <div
         className="selector_container mt-30 mr-20 ml-20 mb-20"
         id="selector_container"
         data-testid="selector-container"
@@ -207,7 +237,7 @@ const SelectorPage: React.FC<any> = function () {
       >
         {isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
-            isErrorPresent
+             <WarningMessage content={warningText} />
           </div>
         ) : (
           // eslint-disable-next-line
