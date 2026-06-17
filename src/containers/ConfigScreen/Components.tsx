@@ -60,7 +60,7 @@ export const TextInputField = function ({
           {objValue?.labelText}
         </FieldLabel>
         {objValue?.helpText && (
-          <Help text={objValue?.helpText} data-testid="text_help" />
+          <Help type="secondary" text={objValue?.helpText} data-testid="text_help" />
         )}
         {/* Change the help caption as per your requirement */}
         <TextInput
@@ -148,7 +148,7 @@ export const RadioInputField = function ({
           {objValue?.labelText}
         </FieldLabel>
         {objValue?.helpText && (
-          <Help text={objValue?.helpText} data-testid="radio_help" />
+          <Help type="secondary" text={objValue?.helpText} data-testid="radio_help" />
         )}
         <div className="Radio-wrapper" data-testid="radio_wrapper">
           {objValue?.options?.map((option: TypeOption, index: number) => (
@@ -201,7 +201,7 @@ export const SelectInputField = function ({
           {objValue?.labelText}
         </FieldLabel>
         {objValue?.helpText && (
-          <Help text={objValue?.helpText} data-testid="select_help" />
+          <Help type="secondary" text={objValue?.helpText} data-testid="select_help" />
         )}
         <Select
           onChange={(e: TypeOption) => updateSelectConfig(e, objKey)}
@@ -366,7 +366,7 @@ export const JsonComponent = function () {
         <FieldLabel required htmlFor="is_custom_json">
           {localeTexts.ConfigFields.entrySaveRadioButton.label}
         </FieldLabel>
-        <Help text={localeTexts.ConfigFields.entrySaveRadioButton.help} />
+        <Help type="secondary" text={localeTexts.ConfigFields.entrySaveRadioButton.help} />
         <br />
         <br />
         <WarningMessage
@@ -410,7 +410,7 @@ export const JsonComponent = function () {
           <FieldLabel required htmlFor="dam_keys">
             {localeTexts.ConfigFields.keysField.label}
           </FieldLabel>
-          <Help text={localeTexts.ConfigFields.keysField.help} />
+          <Help type="secondary" text={localeTexts.ConfigFields.keysField.help} />
           <Select
             options={customOptions}
             onChange={updateTypeObj}

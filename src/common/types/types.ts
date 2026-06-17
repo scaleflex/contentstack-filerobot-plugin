@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 export interface KeyValueObj {
   [key: string]: string;
 }
@@ -57,7 +59,7 @@ export interface TypeCardContainer {
 }
 
 export type ChildProp = {
-  children: string | JSX.Element | JSX.Element[];
+  children: ReactNode;
 };
 
 export interface FileRobotData {

@@ -1,11 +1,11 @@
 import React from "react";
 
-interface TypeCustomComponent {}
+interface TypeCustomComponent { }
 
 const CustomComponent: React.FC<TypeCustomComponent> = function () {
   return (
     <div className="config-custom-component">
-      <center><a href="https://www.scaleflex.com/request-a-demo" target="_blank" rel="noreferrer">Register for a demo</a> if you do not already have a Filerobot account.</center>
+      <center><a href="https://www.scaleflex.com/request-a-demo" target="_blank" rel="noreferrer">Register for a demo</a> if you do not already have a Scaleflex DAM account.</center>
     </div>
   );
 };

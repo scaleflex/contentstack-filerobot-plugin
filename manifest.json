@@ -1,10 +1,10 @@
 {
 	"uid": "65e997d02adeba0012c6e00f",
-	"name": "Scaleflex Filerobot",
+	"name": "Scaleflex DAM",
 	"description": "Store, enrich, normalize, resize, optimize & distribute your images and videos rocket fast around the world.",
 	"target_type": "stack",
 	"visibility": "private",
-	"version": 17,
+	"version": 82,
 	"icon": "",
 	"ui_location": {
 		"signed": false,

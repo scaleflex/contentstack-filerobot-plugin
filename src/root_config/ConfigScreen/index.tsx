@@ -8,73 +8,84 @@ import {
   TypeCustomConfigUpdateParams,
   TypeRootConfigSreen,
 } from "../../common/types/types";
+import { attributesToProps } from "html-react-parser";
 
 const configureConfigScreen = () =>
-  /* IMPORTANT: 
-  1. All sensitive information must be saved in serverConfig
-  2. serverConfig is used when webhooks are implemented
-  3. save the fields that are to be accessed in other location in config
-  4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
-  5. If values are stored in serverConfig then those values will not be available to other UI locations
-  6. Supported type options are textInputFields, radioInputFields, selectInputFields */
-  ({
-    security_template_id: {
-      type: "textInputFields",
-      labelText: "Security Template Id",
-      helpText: "Security template ID, found in the Developers top menu",
-      placeholderText: "",
-      instructionText: "",
-      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
-      saveInConfig: true,
-      saveInServerConfig: false,
-    },
-    container: {
-      type: "textInputFields",
-      labelText: "Container",
-      helpText: "Your Filerobot token from the Asset Hub interface",
-      placeholderText: "",
-      instructionText: "",
-      inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
-      saveInConfig: true,
-      saveInServerConfig: false,
-    },
-    // selectField: {
-    //   type: "selectInputFields",
-    //   labelText: "DAM Select Input",
-    //   helpText: "DAM Select Input Helptext",
-    //   placeholderText: "DAM Select Input Placeholder",
-    //   instructionText: "DAM Select Input Instruction Text",
-    //   options: [
-    //     { label: "option 1", value: "option1" },
-    //     { label: "option 2", value: "option2" },
-    //     { label: "option 3", value: "option3" },
-    //     { label: "option 4", value: "option4" },
-    //     { label: "option 5", value: "option5" },
-    //   ],
-    //   defaultSelectedOption: "option5",
-    //   saveInConfig: true,
-    //   saveInServerConfig: false,
-    // },
-    // radioField: {
-    //   type: "radioInputFields",
-    //   labelText: "DAM Radio Input",
-    //   helpText: "DAM Radio Input Helptext",
-    //   instructionText: "DAM Radio Input Instruction Text",
-    //   options: [
-    //     {
-    //       label: "Single Select",
-    //       value: "SingleSelect",
-    //     },
-    //     {
-    //       label: "Multi Select",
-    //       value: "MultiSelect",
-    //     },
-    //   ],
-    //   defaultSelectedOption: "MultiSelect",
-    //   saveInConfig: true,
-    //   saveInServerConfig: false,
-    // },
-  });
+/* IMPORTANT: 
+1. All sensitive information must be saved in serverConfig
+2. serverConfig is used when webhooks are implemented
+3. save the fields that are to be accessed in other location in config
+4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
+5. If values are stored in serverConfig then those values will not be available to other UI locations
+6. Supported type options are textInputFields, radioInputFields, selectInputFields */
+({
+  security_template_id: {
+    type: "textInputFields",
+    labelText: "Security Template Id",
+    helpText: "Security template ID, found in the Developers top menu",
+    placeholderText: "",
+    instructionText: "",
+    inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
+  container: {
+    type: "textInputFields",
+    labelText: "Token",
+    helpText: "Your Scaleflex DAM token from the Asset Hub interface",
+    placeholderText: "",
+    instructionText: "",
+    inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
+  attributes: {
+    type: "textInputFields",
+    labelText: "Attributes",
+    helpText: "The custom attribute you want to get at the output.",
+    placeholderText: "ex: meta, tags, info",
+    instructionText: "",
+    inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
+  // selectField: {
+  //   type: "selectInputFields",
+  //   labelText: "DAM Select Input",
+  //   helpText: "DAM Select Input Helptext",
+  //   placeholderText: "DAM Select Input Placeholder",
+  //   instructionText: "DAM Select Input Instruction Text",
+  //   options: [
+  //     { label: "option 1", value: "option1" },
+  //     { label: "option 2", value: "option2" },
+  //     { label: "option 3", value: "option3" },
+  //     { label: "option 4", value: "option4" },
+  //     { label: "option 5", value: "option5" },
+  //   ],
+  //   defaultSelectedOption: "option5",
+  //   saveInConfig: true,
+  //   saveInServerConfig: false,
+  // },
+  // radioField: {
+  //   type: "radioInputFields",
+  //   labelText: "DAM Radio Input",
+  //   helpText: "DAM Radio Input Helptext",
+  //   instructionText: "DAM Radio Input Instruction Text",
+  //   options: [
+  //     {
+  //       label: "Single Select",
+  //       value: "SingleSelect",
+  //     },
+  //     {
+  //       label: "Multi Select",
+  //       value: "MultiSelect",
+  //     },
+  //   ],
+  //   defaultSelectedOption: "MultiSelect",
+  //   saveInConfig: true,
+  //   saveInServerConfig: false,
+  // },
+});
 
 const customConfigComponent = (
   config: any,

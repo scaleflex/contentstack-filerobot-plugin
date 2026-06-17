@@ -10,7 +10,7 @@ import CustomFieldUtils from "../../common/utils/CustomFieldUtils";
 import AssetContainer from "./AssetContainer";
 import rootConfig from "../../root_config/index";
 import WarningMessage from "../../components/WarningMessage";
-import {AppFailed} from "../../components/AppFailed";
+import { AppFailed } from "../../components/AppFailed";
 import { MarketplaceAppContext } from "../../common/contexts/MarketplaceAppContext";
 import CustomFieldContext from "../../common/contexts/CustomFieldContext";
 import { TypeErrorFn } from "../../common/types/types";
@@ -44,7 +44,7 @@ const CustomField: React.FC = function () {
   let selectorPageWindow: any;
 
   // save data of "selectedAssets" state in contentstack when updated
-  React.useEffect(() => {    
+  React.useEffect(() => {
     if (selectedAssets) {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
       setSelectedAssetIds(selectedAssets?.map((item) => item?.file?.[uniqueID]));
