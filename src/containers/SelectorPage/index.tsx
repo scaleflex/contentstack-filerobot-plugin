@@ -1,212 +1,122 @@
-import React, { useEffect, useState, useRef } from "react";
-import SelectorPageUtils from "../../common/utils/SelectorPageUtils";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import rootConfig from "../../root_config";
 import { v4 } from "uuid";
-import { TypeErrorFn } from "../../common/types/types";
 import WarningMessage from "../../components/WarningMessage";
-import Explorer from '@filerobot/explorer'
-import Filerobot from '@filerobot/core'
-import XHRUpload from '@filerobot/xhr-upload'
+import { AssetPicker } from "@scaleflex/asset-picker/react";
+import type { AssetPickerRef } from "@scaleflex/asset-picker/react";
+import type { Asset } from "@scaleflex/asset-picker/dist/types/asset.types";
 import localeTexts from "../../common/locales/en-us/index";
-import { isEmpty, isNull } from "lodash";
+import { isEmpty } from "lodash";
 import "./style.css";
-import "@filerobot/core/dist/style.min.css";
-import "@filerobot/explorer/dist/style.min.css";
 
-let isScriptLoaded: any = false;
 let url: string = "";
+
 const SelectorPage: React.FC<any> = function () {
+  const pickerRef = useRef<AssetPickerRef>(null);
+  const [isErrorPresent, setIsErrorPresent] = useState<boolean>(false);
+  const [pickerConfig, setPickerConfig] = useState<any>(null);
+  const [warningText] = useState<string>(localeTexts.Warnings.incorrectConfig);
+  const attributesRef = useRef<string>("");
 
-  const filerobot = useRef<any>(null);
-  // state of isError flag
-  const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
-  // config in selector page
-  const [config, setConfig] = useState<any>();
-  // state for warning text to be used when error
-  const [warningText, setWarningText] = useState<string>(
-    localeTexts.Warnings.incorrectConfig
-  );
-  const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
-  const damContainer = useRef(null);
-
-  // function to check null or missing values of config
-  const checkConfigValues = (configParams: any) => {
-    const configFieldsLength = rootConfig?.damEnv?.CONFIG_FIELDS?.length;
-    for (let i = 0; i < configFieldsLength; i += 1) {
-      if (!configParams[rootConfig?.damEnv?.CONFIG_FIELDS?.[i]]) {
-        return true;
-      }
+  useEffect(() => {
+    if (pickerConfig) {
+      pickerRef.current?.open();
     }
-    return false;
-  };
+  }, [pickerConfig]);
 
-  // function to set error
-  const setError = ({
-    isErr = false,
-    errorText = localeTexts.Warnings.incorrectConfig,
-  }: TypeErrorFn) => {
-    setIsErrorPresent(isErr);
-    if (errorText) setWarningText(errorText);
-  };
+  const handleSelect = useCallback((assets: Asset[]) => {
+    const attrs = attributesRef.current;
+    const fileArr = assets.map((asset) => {
+      const customData: Record<string, any> = {};
+      if (attrs) {
+        attrs.split(",").forEach((attr: string) => {
+          const key = attr.trim();
+          customData[key] = (asset as any)[key] ?? (asset.meta as any)?.[key];
+        });
+      }
+      return {
+        link: asset.url?.cdn || asset.url?.public || "",
+        file: {
+          name: asset.name,
+          uuid: asset.uuid,
+          uid: v4().split("-").join(""),
+          type: asset.type,
+          info: {
+            img_w: asset.info?.img_w,
+            img_h: asset.info?.img_h,
+          },
+          size: {
+            bytes: asset.size?.bytes,
+          },
+          ...customData,
+        },
+      };
+    });
 
-  const successFn = (assets: any[]) => {
     window.opener.postMessage(
-      {
-        message: "add",
-        selectedAssets: assets,
-        type: rootConfig?.damEnv?.DAM_APP_NAME,
-      },
+      { message: "add", selectedAssets: fileArr, type: rootConfig?.damEnv?.DAM_APP_NAME },
       url
     );
     window.close();
-  };
+  }, []);
 
-  const closeFn = () => window.close();
-
-  // function to load dam script and mount component
-  const compactViewImplementation = async (
-    configParams: any,
-    selectedIds: string[]
-  ) => {
-    if (rootConfig?.damEnv?.IS_DAM_SCRIPT) {
-      isScriptLoaded = await SelectorPageUtils.loadDAMScript(
-        rootConfig?.damEnv?.DAM_SCRIPT_URL as string
-      );
-      if (isScriptLoaded === true) {
-        // condition's for checking config variable's
-        if (checkConfigValues(configParams)) {
-          setIsErrorPresent(true);
-          return;
-        }
-        setIsErrorPresent(false);
-        rootConfig?.openComptactView?.(
-          configParams,
-          selectedIds,
-          successFn,
-          closeFn,
-          {
-            containerRef: damContainer,
-            containerClass: "selector_container",
-            containerId: "selector_container",
-          },
-          setError
-        );
-      }
-    }
-  };
-  const handleMessage = (event: MessageEvent) => {
+  const handleMessage = useCallback((event: MessageEvent) => {
     const { data } = event;
-    if (data?.config) {
-      if (
-        data?.message === "init" &&
-        data?.type === rootConfig?.damEnv?.DAM_APP_NAME
-      ) {
-          
-          const container = data?.config?.["container"] || "";
-          const securityTemplateId = data?.config?.["security_template_id"] || "";  
+    if (
+      data?.config &&
+      data?.message === "init" &&
+      data?.type === rootConfig?.damEnv?.DAM_APP_NAME
+    ) {
+      const container = data.config?.["container"] || "";
+      const securityTemplateId = data.config?.["security_template_id"] || "";
+      const attrs = data.config?.["attributes"] || "";
 
-          if (isEmpty(container) || isEmpty(securityTemplateId))
-          {
-            setIsErrorPresent(true)
-          } else {
-            filerobot.current = Filerobot({
-              securityTemplateId: securityTemplateId,
-              container: container,
-              dev: false,
-            })
-            .use(Explorer, {
-            config: {
-                limit: 50,
-                tagging: {
-                language: "en",
-                confidence: 60,
-                limit: 10,
-                }
-            },
-            target: "#filerobot-widget",
-            inline: true,
-            width: "100%",
-            height: "100%",
-            dismissUrlPathQueryUpdate: true,
-            showDetailsView: false,
-            showFolderTree: true,
-            floaty: false,
-            disableDownloadButton: true,
-            hideDownloadButtonIcon: true,
-            preventDownloadDefaultBehavior: true,
-            resetAfterClose: true,
-                // reference https://github.com/scaleflex/commercetools-filerobot-plugin/blob/master/src/components/filerobot/filerobot-dam.jsx
-                locale: {
-                strings: {
-                    mutualizedExportButtonLabel: 'Insert',
-                    mutualizedDownloadButton: 'Insert',
-                }
-            },
-            })
-            .use(XHRUpload) 
-            .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {  
-              const fileArr:any[] = []
-              files.forEach((selected: any) => {
-                const storeData = {
-                      link: selected.link,
-                      file:{
-                        name: selected.file.name,
-                        uuid: selected.file.uuid,
-                        uid: v4()?.split("-")?.join(""),
-                        type: selected.file.type,
-                        info: {
-                          img_w: selected.file.info.img_w,
-                          img_h: selected.file.info.img_h,
-                        },
-                        size: {
-                          bytes: selected.file.size.bytes
-                        }
-                      }
-                    }
-                fileArr.push(storeData)
-              })
-              successFn(fileArr)
-            });
-        
-            setConfig(data?.config);
-            compactViewImplementation(data?.config, data?.selectedIds);
-            setSelectedAssetIds(data?.selectedIds);
-          }
+      if (isEmpty(container) || isEmpty(securityTemplateId)) {
+        setIsErrorPresent(true);
+      } else {
+        attributesRef.current = attrs;
+        setPickerConfig({
+          auth: {
+            mode: "securityTemplate" as const,
+            securityTemplateKey: securityTemplateId,
+            projectToken: container,
+          },
+          displayMode: "inline" as const,
+          multiSelect: true,
+        });
       }
     }
-  };
+  }, []);
 
   useEffect(() => {
     const { opener: windowOpener } = window;
-    if (windowOpener) {
-      const queryString = window.location.href
-        ?.split("?")?.[1]
-        ?.split("=")?.[1];
-      let postMessageUrl: string;
-      switch (queryString) {
-        case "NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
-          break;
-        case "EU":
-          postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
-          break;
-        case "AZURE_NA":
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
-          break;
-        case "CUSTOM-FIELD":
-          postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
-          break;
-        default:
-          postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
-      }
-      url = postMessageUrl;
-      window.addEventListener("message", handleMessage, false);
-      windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
-      window.addEventListener("beforeunload", () => {
-        windowOpener.postMessage({ message: "close" }, postMessageUrl);
-      });
+    if (!windowOpener) return;
+
+    const queryString = window.location.href?.split("?")?.[1]?.split("=")?.[1];
+    let postMessageUrl: string;
+    switch (queryString) {
+      case "NA":
+        postMessageUrl = process.env.REACT_APP_UI_URL_NA ?? "";
+        break;
+      case "EU":
+        postMessageUrl = process.env.REACT_APP_UI_URL_EU ?? "";
+        break;
+      case "AZURE_NA":
+        postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_NA ?? "";
+        break;
+      case "CUSTOM-FIELD":
+        postMessageUrl = process.env.REACT_APP_CUSTOM_FIELD_URL ?? "";
+        break;
+      default:
+        postMessageUrl = process.env.REACT_APP_UI_URL_AZURE_EU ?? "";
     }
-  }, []);
+    url = postMessageUrl;
+    window.addEventListener("message", handleMessage, false);
+    windowOpener.postMessage({ message: "openedReady" }, postMessageUrl);
+    window.addEventListener("beforeunload", () => {
+      windowOpener.postMessage({ message: "close" }, postMessageUrl);
+    });
+  }, [handleMessage]);
 
   return (
     <div className="selector-page-wrapper" data-testid="selector-wrapper">
@@ -215,50 +125,32 @@ const SelectorPage: React.FC<any> = function () {
         data-testid="selector-header"
       >
         <div>
-          <div
-            className="selector-page-header-image"
-            data-testid="selector-logo"
-          >
+          <div className="selector-page-header-image" data-testid="selector-logo">
             <img
               src={rootConfig?.damEnv?.SELECTOR_PAGE_LOGO}
               alt={`${localeTexts.SelectorPage.title} Logo`}
             />
           </div>
-          <span data-testid="selector-title">
-            {localeTexts.SelectorPage.title}
-          </span>
+          <span data-testid="selector-title">{localeTexts.SelectorPage.title}</span>
         </div>
       </div>
       <div
-        className="selector_container mt-30 mr-20 ml-20 mb-20"
+        className="selector_container"
         id="selector_container"
         data-testid="selector-container"
-        ref={damContainer}
       >
         {isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
-             <WarningMessage content={warningText} />
+            <WarningMessage content={warningText} />
           </div>
-        ) : (
-          // eslint-disable-next-line
-          <>
-            {rootConfig?.damEnv?.IS_DAM_SCRIPT ? (
-              // If Compact view script avaialble
-              // eslint-disable-next-line
-              <div id="filerobot-widget"></div>
-            ) : (
-              // If there is no script custom component will be added
-            //   rootConfig?.customSelectorComponent?.(
-            //     config,
-            //     setError,
-            //     successFn,
-            //     closeFn,
-            //     selectedAssetIds
-            //   )
-            <div id="filerobot-widget"></div>
-            )}
-          </>
-        )}
+        ) : pickerConfig ? (
+          <AssetPicker
+            ref={pickerRef}
+            config={pickerConfig}
+            onSelect={handleSelect}
+            onCancel={() => window.close()}
+          />
+        ) : null}
       </div>
     </div>
   );
