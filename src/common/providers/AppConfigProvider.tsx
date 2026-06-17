@@ -21,7 +21,7 @@ const AppConfigProvider = ({ children }: ChildProp) => {
     ConfigScreenUtils.configRootUtils();
 
   // ref for managing the save button disable state
-  const appConfig = useRef<any>();
+  const appConfig = useRef<any>(null);
 
   const { location } = useAppLocation();
 

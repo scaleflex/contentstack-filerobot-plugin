@@ -9,12 +9,13 @@ const AppConfigurationExtension: React.FC = () => {
   const { installationData, setInstallationData } = useInstallationData();
   const securityTemplateIdConfigDataRef = useRef<HTMLInputElement>(null);
   const containerConfigDataRef = useRef<HTMLInputElement>(null);
+  const attributesConfigDataRef = useRef<HTMLInputElement>(null);
 
   const updateConfig = async () => {
     if (typeof setInstallationData !== "undefined") {
       setInstallationData({
-        configuration: { security_template_id: securityTemplateIdConfigDataRef.current?.value, container: containerConfigDataRef.current?.value },
-        serverConfiguration: {  },
+        configuration: { security_template_id: securityTemplateIdConfigDataRef.current?.value, container: containerConfigDataRef.current?.value, attributes: attributesConfigDataRef.current?.value },
+        serverConfiguration: {},
       });
     }
   };
@@ -80,7 +81,31 @@ const AppConfigurationExtension: React.FC = () => {
             </div> */}
           </div>
 
-          
+          <div className={`${styles.configContainer}`}>
+            <div className={`${styles.infoContainerWrapper}`}>
+              <div className={`${styles.infoContainer}`}>
+                <div className={`${styles.labelWrapper}`}>
+                  <label htmlFor="appConfigData">Attributes</label>
+                  {/* <Tooltip content="The custom attribute you want to get at the output." /> */}
+                </div>
+              </div>
+              <div className={`${styles.inputContainer}`}>
+                <input
+                  type="text"
+                  ref={attributesConfigDataRef}
+                  required
+                  value={installationData.configuration.attributes as string}
+                  placeholder="ex: meta, tags, info"
+                  name="attributesConfigData"
+                  autoComplete="off"
+                  className={`${styles.fieldInput}`}
+                  onChange={updateConfig} />
+              </div>
+            </div>
+            {/* <div className={`${styles.descriptionContainer}`}>
+              <p>Use this field to share non-sensitive configurations of your app with other locations.</p>
+            </div> */}
+          </div>
 
           {/* <div className={`${styles.configContainer}`}>
             <div className={`${styles.infoContainerWrapper}`}>

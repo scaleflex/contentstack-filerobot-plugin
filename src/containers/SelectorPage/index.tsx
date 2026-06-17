@@ -4,19 +4,21 @@ import rootConfig from "../../root_config";
 import { v4 } from "uuid";
 import { TypeErrorFn } from "../../common/types/types";
 import WarningMessage from "../../components/WarningMessage";
-import Explorer from '@filerobot/explorer'
-import Filerobot from '@filerobot/core'
-import XHRUpload from '@filerobot/xhr-upload'
+import Explorer from '@scaleflex/widget-explorer';
+import ScaleflexWidget from '@scaleflex/widget-core'
+import XHRUpload from '@scaleflex/widget-xhr-upload'
 import localeTexts from "../../common/locales/en-us/index";
 import { isEmpty, isNull } from "lodash";
 import "./style.css";
-import "@filerobot/core/dist/style.min.css";
-import "@filerobot/explorer/dist/style.min.css";
+import "@scaleflex/widget-core/dist/style.min.css";
+import "@scaleflex/widget-explorer/dist/style.min.css";
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const ExploreView = require('@scaleflex/widget-explorer/lib/components/ExploreView').default as any;
 
 let isScriptLoaded: any = false;
 let url: string = "";
 const SelectorPage: React.FC<any> = function () {
-
   const filerobot = useRef<any>(null);
   // state of isError flag
   const [isErrorPresent, setIsErrorPresent] = React.useState<boolean>(false);
@@ -101,77 +103,86 @@ const SelectorPage: React.FC<any> = function () {
         data?.message === "init" &&
         data?.type === rootConfig?.damEnv?.DAM_APP_NAME
       ) {
-          
-          const container = data?.config?.["container"] || "";
-          const securityTemplateId = data?.config?.["security_template_id"] || "";  
+        const container = data?.config?.["container"] || "";
+        const securityTemplateId = data?.config?.["security_template_id"] || "";
+        const attributes = data?.config?.["attributes"] || "";
 
-          if (isEmpty(container) || isEmpty(securityTemplateId))
-          {
-            setIsErrorPresent(true)
-          } else {
-            filerobot.current = Filerobot({
-              securityTemplateId: securityTemplateId,
-              container: container,
-              dev: false,
-            })
-            .use(Explorer, {
-            config: {
+
+        if (isEmpty(container) || isEmpty(securityTemplateId)) {
+          setIsErrorPresent(true)
+        } else {
+          filerobot.current = ScaleflexWidget({
+            securityTemplateId: securityTemplateId,
+            container: container,
+            dev: false,
+          })
+            .use(Explorer as any, {
+              config: {
                 limit: 50,
                 tagging: {
-                language: "en",
-                confidence: 60,
-                limit: 10,
+                  language: "en",
+                  confidence: 60,
+                  limit: 10,
                 }
-            },
-            target: "#filerobot-widget",
-            inline: true,
-            width: "100%",
-            height: "100%",
-            dismissUrlPathQueryUpdate: true,
-            showDetailsView: false,
-            showFolderTree: true,
-            floaty: false,
-            disableDownloadButton: true,
-            hideDownloadButtonIcon: true,
-            preventDownloadDefaultBehavior: true,
-            resetAfterClose: true,
-                // reference https://github.com/scaleflex/commercetools-filerobot-plugin/blob/master/src/components/filerobot/filerobot-dam.jsx
-                locale: {
+              },
+              target: "#filerobot-widget",
+              inline: true,
+              width: "100%",
+              height: "100%",
+              dismissUrlPathQueryUpdate: true,
+              showDetailsView: false,
+              showFolderTree: true,
+              floaty: false,
+              disableDownloadButton: true,
+              hideDownloadButtonIcon: true,
+              preventDownloadDefaultBehavior: true,
+              resetAfterClose: true,
+              // reference https://github.com/scaleflex/commercetools-filerobot-plugin/blob/master/src/components/filerobot/filerobot-dam.jsx
+              locale: {
                 strings: {
-                    mutualizedExportButtonLabel: 'Insert',
-                    mutualizedDownloadButton: 'Insert',
+                  mutualizedExportButtonLabel: 'Insert',
+                  mutualizedDownloadButton: 'Insert',
                 }
-            },
-            })
-            .use(XHRUpload) 
-            .on('export', function (files, popupExportSuccessMsgFn, downloadFilesPackagedFn, downloadFileFn) {  
-              const fileArr:any[] = []
+              },
+              ExploreViewComponent: ExploreView,
+            } as any)
+            .use(XHRUpload as any)
+            .on('export', function (files: any[], popupExportSuccessMsgFn: any, downloadFilesPackagedFn: any, downloadFileFn: any) {
+              const fileArr: any[] = []
               files.forEach((selected: any) => {
+                const customData: Record<string, any> = {};
+                if (attributes) {
+                  attributes.split(",").forEach((attr: string) => {
+                    const key = attr.trim();
+                    customData[key] = selected.file[key];
+                  })
+                }
                 const storeData = {
-                      link: selected.link,
-                      file:{
-                        name: selected.file.name,
-                        uuid: selected.file.uuid,
-                        uid: v4()?.split("-")?.join(""),
-                        type: selected.file.type,
-                        info: {
-                          img_w: selected.file.info.img_w,
-                          img_h: selected.file.info.img_h,
-                        },
-                        size: {
-                          bytes: selected.file.size.bytes
-                        }
-                      }
-                    }
+                  link: selected.link,
+                  file: {
+                    name: selected.file.name,
+                    uuid: selected.file.uuid,
+                    uid: v4()?.split("-")?.join(""),
+                    type: selected.file.type,
+                    info: {
+                      img_w: selected.file.info.img_w,
+                      img_h: selected.file.info.img_h,
+                    },
+                    size: {
+                      bytes: selected.file.size.bytes
+                    },
+                    ...customData
+                  }
+                }
                 fileArr.push(storeData)
               })
               successFn(fileArr)
             });
-        
-            setConfig(data?.config);
-            compactViewImplementation(data?.config, data?.selectedIds);
-            setSelectedAssetIds(data?.selectedIds);
-          }
+
+          setConfig(data?.config);
+          compactViewImplementation(data?.config, data?.selectedIds);
+          setSelectedAssetIds(data?.selectedIds);
+        }
       }
     }
   };
@@ -237,7 +248,7 @@ const SelectorPage: React.FC<any> = function () {
       >
         {isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
-             <WarningMessage content={warningText} />
+            <WarningMessage content={warningText} />
           </div>
         ) : (
           // eslint-disable-next-line
@@ -248,14 +259,14 @@ const SelectorPage: React.FC<any> = function () {
               <div id="filerobot-widget"></div>
             ) : (
               // If there is no script custom component will be added
-            //   rootConfig?.customSelectorComponent?.(
-            //     config,
-            //     setError,
-            //     successFn,
-            //     closeFn,
-            //     selectedAssetIds
-            //   )
-            <div id="filerobot-widget"></div>
+              //   rootConfig?.customSelectorComponent?.(
+              //     config,
+              //     setError,
+              //     successFn,
+              //     closeFn,
+              //     selectedAssetIds
+              //   )
+              <div id="filerobot-widget"></div>
             )}
           </>
         )}
