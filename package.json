@@ -174,5 +174,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "overrides": {
+    "underscore": ">=1.13.8"
   }
 }
