@@ -2,6 +2,9 @@ name: Source Composition Analysis Scan
 on:
   pull_request:
     types: [opened, synchronize, reopened]
+permissions:
+  contents: read
+
 jobs:
   security:
     runs-on: ubuntu-latest
