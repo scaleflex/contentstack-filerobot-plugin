@@ -296,7 +296,7 @@ export const deleteApp = async (token: string, appId: string) => {
 
 // create content-type
 export const createContentType = async (authToken: string, extension_uid: ExtensionUid[]) => {
-  const generateUid = `Test Content Type_${Math.floor(Math.random() * 1000)}`;
+  const generateUid = `Test Content Type_${crypto.randomUUID().slice(0, 8)}`;
   let options = {
     url: `https://${BASE_API_URL}/v3/content_types`,
     method: 'POST',
