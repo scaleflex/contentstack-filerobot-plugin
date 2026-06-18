@@ -9,6 +9,8 @@ declare namespace NodeJS {
   }
 }
 
+declare const __BUILD_DATE__: string;
+
 declare module '*.avif' {
   const src: string;
   export default src;
@@ -40,8 +42,8 @@ declare module '*.png' {
 }
 
 declare module '*.webp' {
-    const src: string;
-    export default src;
+  const src: string;
+  export default src;
 }
 
 declare module '*.svg' {
@@ -68,4 +70,8 @@ declare module '*.module.scss' {
 declare module '*.module.sass' {
   const classes: { readonly [key: string]: string };
   export default classes;
+}
+
+declare module '@scaleflex/asset-picker/react' {
+  export * from '@scaleflex/asset-picker/dist/react';
 }

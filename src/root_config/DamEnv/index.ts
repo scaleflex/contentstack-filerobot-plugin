@@ -1,4 +1,4 @@
-import Logo from "../../common/asset/logo.svg";
+import Logo from "../../common/asset/logo.png";
 import { TypeRootDamEnv } from "../../common/types/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
