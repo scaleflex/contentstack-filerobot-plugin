@@ -13,8 +13,13 @@ let url: string = "";
 const SelectorPage: React.FC<any> = function () {
   const [isErrorPresent, setIsErrorPresent] = useState<boolean>(false);
   const [pickerConfig, setPickerConfig] = useState<any>(null);
+  const [isPickerReady, setIsPickerReady] = useState<boolean>(false);
   const [warningText] = useState<string>(localeTexts.Warnings.incorrectConfig);
   const attributesRef = useRef<string>("");
+
+  useEffect(() => {
+    customElements.whenDefined('sfx-asset-picker').then(() => setIsPickerReady(true));
+  }, []);
 
   const handleSelect = useCallback((assets: Asset[]) => {
     const attrs = attributesRef.current;
@@ -136,7 +141,7 @@ const SelectorPage: React.FC<any> = function () {
             <WarningMessage content={warningText} />
           </div>
         ) : null}
-        {pickerConfig && (
+        {pickerConfig && isPickerReady && (
           <AssetPicker
             config={pickerConfig}
             open={true}
