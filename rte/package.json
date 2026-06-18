@@ -58,5 +58,8 @@
     "boilerplate"
   ],
   "author": "Contentstack",
-  "license": "MIT"
+  "license": "MIT",
+  "overrides": {
+    "dompurify": ">=3.4.9"
+  }
 }
