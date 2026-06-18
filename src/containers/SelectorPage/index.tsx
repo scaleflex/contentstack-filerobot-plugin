@@ -135,14 +135,15 @@ const SelectorPage: React.FC<any> = function () {
           <div className="info-wrapper" data-testid="warning-component">
             <WarningMessage content={warningText} />
           </div>
-        ) : pickerConfig ? (
+        ) : null}
+        {pickerConfig && (
           <AssetPicker
             config={pickerConfig}
             open={true}
             onSelect={handleSelect}
             onCancel={() => window.close()}
           />
-        ) : null}
+        )}
       </div>
     </div>
   );
