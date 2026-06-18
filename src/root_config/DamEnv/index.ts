@@ -1,8 +1,8 @@
-import Logo from "../../common/asset/logo.svg";
+import Logo from "../../common/asset/logo.png";
 import { TypeRootDamEnv } from "../../common/types/types";
 
 const DamEnvVariables: TypeRootDamEnv = {
-  DAM_APP_NAME: "Filerobot",
+  DAM_APP_NAME: "Scaleflex DAM",
   ASSET_UNIQUE_ID: "uid",
   SELECTOR_PAGE_LOGO: Logo,
   CONFIG_FIELDS: ['container', 'security_template_id', 'attributes'],
