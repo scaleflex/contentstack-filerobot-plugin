@@ -3,7 +3,6 @@ import rootConfig from "../../root_config";
 import { v4 } from "uuid";
 import WarningMessage from "../../components/WarningMessage";
 import { AssetPicker } from "@scaleflex/asset-picker/react";
-import type { AssetPickerRef } from "@scaleflex/asset-picker/react";
 import type { Asset } from "@scaleflex/asset-picker/dist/types/asset.types";
 import localeTexts from "../../common/locales/en-us/index";
 import { isEmpty } from "lodash";
@@ -12,17 +11,10 @@ import "./style.css";
 let url: string = "";
 
 const SelectorPage: React.FC<any> = function () {
-  const pickerRef = useRef<AssetPickerRef>(null);
   const [isErrorPresent, setIsErrorPresent] = useState<boolean>(false);
   const [pickerConfig, setPickerConfig] = useState<any>(null);
   const [warningText] = useState<string>(localeTexts.Warnings.incorrectConfig);
   const attributesRef = useRef<string>("");
-
-  useEffect(() => {
-    if (pickerConfig) {
-      pickerRef.current?.open();
-    }
-  }, [pickerConfig]);
 
   const handleSelect = useCallback((assets: Asset[]) => {
     const attrs = attributesRef.current;
@@ -145,8 +137,8 @@ const SelectorPage: React.FC<any> = function () {
           </div>
         ) : pickerConfig ? (
           <AssetPicker
-            ref={pickerRef}
             config={pickerConfig}
+            open={true}
             onSelect={handleSelect}
             onCancel={() => window.close()}
           />
