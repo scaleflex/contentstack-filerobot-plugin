@@ -178,6 +178,7 @@
   "overrides": {
     "underscore": ">=1.13.8",
     "serialize-javascript": ">=7.0.5",
-    "nth-check": ">=2.0.1"
+    "nth-check": ">=2.0.1",
+    "uuid": ">=11.1.1"
   }
 }
