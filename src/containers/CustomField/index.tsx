@@ -18,6 +18,21 @@ import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
+// Traverse content type schema to find the path to a field UID (handles global fields / groups)
+const findFieldPath = (schema: any[], targetUid: string, path: string[] = []): string[] | null => {
+  for (const f of schema ?? []) {
+    if (f.uid === targetUid) return [...path, f.uid];
+    if (Array.isArray(f.schema)) {
+      const found = findFieldPath(f.schema, targetUid, [...path, f.uid]);
+      if (found) return found;
+    }
+  }
+  return null;
+};
+
+const buildNestedObject = (path: string[], value: any): any =>
+  path.length === 1 ? { [path[0]]: value } : { [path[0]]: buildNestedObject(path.slice(1), value) };
+
 const CustomField: React.FC = function () {
   const { appFailed } = useContext(MarketplaceAppContext);
   const {
@@ -44,11 +59,23 @@ const CustomField: React.FC = function () {
   let selectorPageWindow: any;
 
   // save data of "selectedAssets" state in contentstack when updated
-  React.useEffect(() => {    
+  React.useEffect(() => {
     if (selectedAssets) {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
       setSelectedAssetIds(selectedAssets?.map((item) => item?.file?.[uniqueID]));
-      state?.location?.field?.setData(selectedAssets);
+      state?.location?.field?.setData(selectedAssets).catch(() => {
+        // field.setData() fails when the custom field is inside a Global Field because
+        // the SDK validates the field path locally against the content type schema.
+        // Fallback: use entry.setData() which delegates directly to the host bridge,
+        // bypassing local validation. We rebuild the nested path from the content type schema.
+        const entry = state?.location?.entry;
+        const fieldUid = state?.location?.field?.uid;
+        const schema = (entry as any)?.content_type?.schema;
+        if (!entry || !fieldUid || !schema) return;
+        const path = findFieldPath(schema, fieldUid);
+        if (!path?.length) return;
+        entry.setData(buildNestedObject(path, selectedAssets)).catch(() => {});
+      });
     }
   }, [
     selectedAssets, // Your Custom Field State Data
