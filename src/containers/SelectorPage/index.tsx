@@ -80,6 +80,11 @@ const SelectorPage: React.FC<any> = function () {
           },
           displayMode: "inline" as const,
           multiSelect: true,
+          uploader: {},
+          rememberLastTab: true,
+          rememberLastFolder: true,
+          rememberLastView: true,
+          folderCreation: true
         });
       }
     }
