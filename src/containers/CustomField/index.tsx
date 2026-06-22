@@ -18,7 +18,7 @@ import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-// Traverse content type schema to find the path to a field UID (handles global fields / groups / modular blocks)
+// Traverse content type schema to find the static path to a field UID
 const findFieldPath = (schema: any[], targetUid: string, path: string[] = []): string[] | null => {
   for (const f of schema ?? []) {
     if (f.uid === targetUid) return [...path, f.uid];
@@ -38,20 +38,115 @@ const findFieldPath = (schema: any[], targetUid: string, path: string[] = []): s
   return null;
 };
 
-const setValueAtPath = (obj: any, path: string[], value: any) => {
-  let current = obj;
-  for (let i = 0; i < path.length - 1; i++) {
-    const key = path[i];
-    const nextKey = path[i + 1];
-    const isNextKeyIndex = !isNaN(Number(nextKey));
-    if (current[key] === undefined) {
-      current[key] = isNextKeyIndex ? [] : {};
+// Traverse entry data using the template path to locate the exact path with indices.
+const matchTemplatePath = (
+  current: any,
+  template: string[],
+  targetValue: any,
+  currentPath: string[] = [],
+  templateIndex: number = 0
+): string[] | null => {
+  if (templateIndex >= template.length) {
+    const isEmptyTarget = targetValue === undefined || targetValue === null || (Array.isArray(targetValue) && targetValue.length === 0);
+    const isEmptyCurrent = current === undefined || current === null || (Array.isArray(current) && current.length === 0);
+    if (isEmptyTarget && isEmptyCurrent) {
+      return currentPath;
     }
-    current = current[key];
+    if (JSON.stringify(current) === JSON.stringify(targetValue)) {
+      return currentPath;
+    }
+    return null;
   }
-  if (current && typeof current === "object") {
-    current[path[path.length - 1]] = value;
+
+  const expectedKey = template[templateIndex];
+  const isLastSegment = templateIndex === template.length - 1;
+
+  if (current && typeof current === 'object') {
+    if (Array.isArray(current)) {
+      for (let i = 0; i < current.length; i++) {
+        const item = current[i];
+        if (item && typeof item === 'object' && expectedKey in item) {
+          const found = matchTemplatePath(
+            item[expectedKey],
+            template,
+            targetValue,
+            [...currentPath, String(i), expectedKey],
+            templateIndex + 1
+          );
+          if (found) return found;
+        } else {
+          const found = matchTemplatePath(
+            item,
+            template,
+            targetValue,
+            [...currentPath, String(i)],
+            templateIndex
+          );
+          if (found) return found;
+        }
+      }
+    } else {
+      if (isLastSegment) {
+        if (expectedKey in current) {
+          const val = current[expectedKey];
+          const isEmptyTarget = targetValue === undefined || targetValue === null || (Array.isArray(targetValue) && targetValue.length === 0);
+          const isEmptyCurrent = val === undefined || val === null || (Array.isArray(val) && val.length === 0);
+          if ((isEmptyTarget && isEmptyCurrent) || JSON.stringify(val) === JSON.stringify(targetValue)) {
+            return [...currentPath, expectedKey];
+          }
+        } else {
+          const isEmptyTarget = targetValue === undefined || targetValue === null || (Array.isArray(targetValue) && targetValue.length === 0);
+          if (isEmptyTarget) {
+            return [...currentPath, expectedKey];
+          }
+        }
+      } else if (expectedKey in current) {
+        return matchTemplatePath(
+          current[expectedKey],
+          template,
+          targetValue,
+          [...currentPath, expectedKey],
+          templateIndex + 1
+        );
+      }
+    }
   }
+
+  return null;
+};
+
+// Resolve the dotted path with indices dynamically
+const getFieldPath = (field: any, entry: any): string => {
+  const sdkPath = field?.schema?.$uid || field?.uid;
+  if (!sdkPath) return '';
+
+  const segments = sdkPath.split('.');
+  const hasIndex = segments.some((segment: string) => !isNaN(Number(segment)));
+  if (hasIndex) {
+    return sdkPath;
+  }
+
+  // Find template path (either sdkPath split by dot, or traversed from content_type schema)
+  let templatePath = segments;
+  if (!field?.schema?.$uid) {
+    const schema = entry?.content_type?.schema;
+    if (schema) {
+      const foundPath = findFieldPath(schema, field.uid);
+      if (foundPath) {
+        templatePath = foundPath;
+      }
+    }
+  }
+
+  const entryData = entry.getData() || {};
+  const initialValue = field.getData();
+
+  const resolvedPath = matchTemplatePath(entryData, templatePath, initialValue);
+  if (resolvedPath) {
+    return resolvedPath.join('.');
+  }
+
+  return sdkPath;
 };
 
 const CustomField: React.FC = function () {
@@ -84,48 +179,29 @@ const CustomField: React.FC = function () {
     if (selectedAssets) {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
       setSelectedAssetIds(selectedAssets?.map((item) => item?.file?.[uniqueID]));
-      state?.location?.field?.setData(selectedAssets).catch(() => {
-        // field.setData() fails when the custom field is inside a Global Field or Modular Block because
-        // the SDK validates the field path locally against the content type schema.
-        // Fallback: use entry.setData() which delegates directly to the host bridge,
-        // bypassing local validation. We rebuild the nested path from the field schema/uid or content type schema.
-        const entry = state?.location?.entry;
-        const field = state?.location?.field;
-        if (!entry || !field) return;
 
-        // Try getting the dotted path from the SDK schema/field first
-        const sdkPath = field.schema?.$uid || field.uid;
-        let path: string[] | null = null;
-        
-        if (sdkPath && sdkPath.includes('.')) {
-          path = sdkPath.split('.');
-        } else {
-          // Fall back to searching schema if the sdk path is not dotted
-          const schema = (entry as any)?.content_type?.schema;
-          if (schema) {
-            path = findFieldPath(schema, field.uid);
+      const entry = state?.location?.entry;
+      const field = state?.location?.field;
+      if (field) {
+        if (entry) {
+          const dottedPath = getFieldPath(field, entry);
+          if (dottedPath) {
+            field.uid = dottedPath;
           }
         }
+        field._self = true;
+        field.setData(selectedAssets).catch((err: any) => {
+          // If the error is "Target window is closed", it is a harmless side-effect
+          // of Contentstack attempting to notify a closed/unmounted sidebar widget.
+          // The data itself has already been successfully committed to the field.
+          if (err?.message?.includes('Target window is closed') || err?.toString()?.includes('Target window is closed')) {
+            return;
+          }
 
-        if (!path?.length) return;
-        
-        // Update the entry data at the specified path and set it
-        const entryData = entry.getData() || {};
-        const rootKey = path[0];
-        const isNextKeyIndex = path[1] !== undefined && !isNaN(Number(path[1]));
-
-        if (path.length === 1) {
-          entry.setData({ [rootKey]: selectedAssets }).catch(() => {});
-        } else {
-          // Deep copy the root field's value to avoid mutating the entry object directly
-          const rootValue = entryData[rootKey]
-            ? JSON.parse(JSON.stringify(entryData[rootKey]))
-            : (isNextKeyIndex ? [] : {});
-            
-          setValueAtPath(rootValue, path.slice(1), selectedAssets);
-          entry.setData({ [rootKey]: rootValue }).catch(() => {});
-        }
-      });
+          // Log other errors for diagnostic purposes
+          console.error("Contentstack App SDK: field.setData error:", err);
+        });
+      }
     }
   }, [
     selectedAssets, // Your Custom Field State Data
