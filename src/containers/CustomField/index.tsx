@@ -18,7 +18,7 @@ import constants from "../../common/constants";
 
 /* To add any labels / captions for fields or any inputs, use common/local/en-us/index.ts */
 
-// Traverse content type schema to find the path to a field UID (handles global fields / groups)
+// Traverse content type schema to find the path to a field UID (handles global fields / groups / modular blocks)
 const findFieldPath = (schema: any[], targetUid: string, path: string[] = []): string[] | null => {
   for (const f of schema ?? []) {
     if (f.uid === targetUid) return [...path, f.uid];
@@ -26,12 +26,33 @@ const findFieldPath = (schema: any[], targetUid: string, path: string[] = []): s
       const found = findFieldPath(f.schema, targetUid, [...path, f.uid]);
       if (found) return found;
     }
+    if (Array.isArray(f.blocks)) {
+      for (const block of f.blocks) {
+        if (Array.isArray(block.schema)) {
+          const found = findFieldPath(block.schema, targetUid, [...path, f.uid, block.uid]);
+          if (found) return found;
+        }
+      }
+    }
   }
   return null;
 };
 
-const buildNestedObject = (path: string[], value: any): any =>
-  path.length === 1 ? { [path[0]]: value } : { [path[0]]: buildNestedObject(path.slice(1), value) };
+const setValueAtPath = (obj: any, path: string[], value: any) => {
+  let current = obj;
+  for (let i = 0; i < path.length - 1; i++) {
+    const key = path[i];
+    const nextKey = path[i + 1];
+    const isNextKeyIndex = !isNaN(Number(nextKey));
+    if (current[key] === undefined) {
+      current[key] = isNextKeyIndex ? [] : {};
+    }
+    current = current[key];
+  }
+  if (current && typeof current === "object") {
+    current[path[path.length - 1]] = value;
+  }
+};
 
 const CustomField: React.FC = function () {
   const { appFailed } = useContext(MarketplaceAppContext);
@@ -64,17 +85,46 @@ const CustomField: React.FC = function () {
       setRenderAssets(rootConfig?.filterAssetData?.(selectedAssets));
       setSelectedAssetIds(selectedAssets?.map((item) => item?.file?.[uniqueID]));
       state?.location?.field?.setData(selectedAssets).catch(() => {
-        // field.setData() fails when the custom field is inside a Global Field because
+        // field.setData() fails when the custom field is inside a Global Field or Modular Block because
         // the SDK validates the field path locally against the content type schema.
         // Fallback: use entry.setData() which delegates directly to the host bridge,
-        // bypassing local validation. We rebuild the nested path from the content type schema.
+        // bypassing local validation. We rebuild the nested path from the field schema/uid or content type schema.
         const entry = state?.location?.entry;
-        const fieldUid = state?.location?.field?.uid;
-        const schema = (entry as any)?.content_type?.schema;
-        if (!entry || !fieldUid || !schema) return;
-        const path = findFieldPath(schema, fieldUid);
+        const field = state?.location?.field;
+        if (!entry || !field) return;
+
+        // Try getting the dotted path from the SDK schema/field first
+        const sdkPath = field.schema?.$uid || field.uid;
+        let path: string[] | null = null;
+        
+        if (sdkPath && sdkPath.includes('.')) {
+          path = sdkPath.split('.');
+        } else {
+          // Fall back to searching schema if the sdk path is not dotted
+          const schema = (entry as any)?.content_type?.schema;
+          if (schema) {
+            path = findFieldPath(schema, field.uid);
+          }
+        }
+
         if (!path?.length) return;
-        entry.setData(buildNestedObject(path, selectedAssets)).catch(() => {});
+        
+        // Update the entry data at the specified path and set it
+        const entryData = entry.getData() || {};
+        const rootKey = path[0];
+        const isNextKeyIndex = path[1] !== undefined && !isNaN(Number(path[1]));
+
+        if (path.length === 1) {
+          entry.setData({ [rootKey]: selectedAssets }).catch(() => {});
+        } else {
+          // Deep copy the root field's value to avoid mutating the entry object directly
+          const rootValue = entryData[rootKey]
+            ? JSON.parse(JSON.stringify(entryData[rootKey]))
+            : (isNextKeyIndex ? [] : {});
+            
+          setValueAtPath(rootValue, path.slice(1), selectedAssets);
+          entry.setData({ [rootKey]: rootValue }).catch(() => {});
+        }
       });
     }
   }, [
