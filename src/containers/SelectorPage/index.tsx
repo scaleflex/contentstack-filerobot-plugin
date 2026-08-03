@@ -80,7 +80,12 @@ const SelectorPage: React.FC<any> = function () {
           },
           displayMode: "inline" as const,
           multiSelect: true,
-          uploader: {},
+          uploader: {
+            showFillMetadata: true,
+            metadataConfig: {
+              enforceRequiredBeforeUpload: 'auto',
+            },
+          },
           rememberLastTab: true,
           rememberLastFolder: true,
           rememberLastView: true,
