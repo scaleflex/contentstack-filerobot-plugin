@@ -2,6 +2,8 @@ import React, { useEffect, useState, useRef, useCallback } from "react";
 import rootConfig from "../../root_config";
 import { v4 } from "uuid";
 import WarningMessage from "../../components/WarningMessage";
+import HubLoginPage from "../../components/HubLoginPage";
+import HubAuthUtils, { HubAuthData } from "../../common/utils/HubAuthUtils";
 import { AssetPicker } from "@scaleflex/asset-picker/react";
 import type { Asset } from "@scaleflex/asset-picker/dist/types/asset.types";
 import localeTexts from "../../common/locales/en-us/index";
@@ -10,10 +12,28 @@ import "./style.css";
 
 let url: string = "";
 
+// shared picker options, layered on top of the resolved auth config
+const buildPickerConfig = (auth: any) => ({
+  auth,
+  displayMode: "inline" as const,
+  multiSelect: true,
+  uploader: {
+    showFillMetadata: true,
+    metadataConfig: {
+      enforceRequiredBeforeUpload: 'auto',
+    },
+  },
+  rememberLastTab: true,
+  rememberLastFolder: true,
+  rememberLastView: true,
+  folderCreation: true
+});
+
 const SelectorPage: React.FC<any> = function () {
   const [isErrorPresent, setIsErrorPresent] = useState<boolean>(false);
   const [pickerConfig, setPickerConfig] = useState<any>(null);
   const [isPickerReady, setIsPickerReady] = useState<boolean>(false);
+  const [showHubLogin, setShowHubLogin] = useState<boolean>(false);
   const [warningText] = useState<string>(localeTexts.Warnings.incorrectConfig);
   const attributesRef = useRef<string>("");
 
@@ -57,6 +77,41 @@ const SelectorPage: React.FC<any> = function () {
     window.close();
   }, []);
 
+  // renews the stored Hub session's SASS key (and the session itself) from localStorage
+  // data; only falls back to the login screen if the session itself is unusable
+  const handleHubAuthFlow = useCallback(async () => {
+    const stored = HubAuthUtils.getStoredHubAuth();
+    if (stored) {
+      const renewed = await HubAuthUtils.renewHubAuth(stored);
+      if (renewed) {
+        HubAuthUtils.saveHubAuth(renewed);
+        setPickerConfig(
+          buildPickerConfig({
+            mode: "sassKey" as const,
+            sassKey: renewed.sassKey,
+            projectToken: renewed.token,
+          })
+        );
+        return;
+      }
+
+      HubAuthUtils.clearHubAuth();
+    }
+    setShowHubLogin(true);
+  }, []);
+
+  const handleHubLoginSuccess = useCallback((data: HubAuthData) => {
+    HubAuthUtils.saveHubAuth(data);
+    setShowHubLogin(false);
+    setPickerConfig(
+      buildPickerConfig({
+        mode: "sassKey" as const,
+        sassKey: data.sassKey,
+        projectToken: data.token,
+      })
+    );
+  }, []);
+
   const handleMessage = useCallback((event: MessageEvent) => {
     const { data } = event;
     if (
@@ -64,36 +119,30 @@ const SelectorPage: React.FC<any> = function () {
       data?.message === "init" &&
       data?.type === rootConfig?.damEnv?.DAM_APP_NAME
     ) {
+      const attrs = data.config?.["attributes"] || "";
+      attributesRef.current = attrs;
+
+      if (data.config?.["auth_method"] === "login_hub") {
+        handleHubAuthFlow();
+        return;
+      }
+
       const container = data.config?.["container"] || "";
       const securityTemplateId = data.config?.["security_template_id"] || "";
-      const attrs = data.config?.["attributes"] || "";
 
       if (isEmpty(container) || isEmpty(securityTemplateId)) {
         setIsErrorPresent(true);
       } else {
-        attributesRef.current = attrs;
-        setPickerConfig({
-          auth: {
+        setPickerConfig(
+          buildPickerConfig({
             mode: "securityTemplate" as const,
             securityTemplateKey: securityTemplateId,
             projectToken: container,
-          },
-          displayMode: "inline" as const,
-          multiSelect: true,
-          uploader: {
-            showFillMetadata: true,
-            metadataConfig: {
-              enforceRequiredBeforeUpload: 'auto',
-            },
-          },
-          rememberLastTab: true,
-          rememberLastFolder: true,
-          rememberLastView: true,
-          folderCreation: true
-        });
+          })
+        );
       }
     }
-  }, []);
+  }, [handleHubAuthFlow]);
 
   useEffect(() => {
     const { opener: windowOpener } = window;
@@ -146,12 +195,16 @@ const SelectorPage: React.FC<any> = function () {
         id="selector_container"
         data-testid="selector-container"
       >
-        {isErrorPresent ? (
+        {showHubLogin ? (
+          <div className="info-wrapper" data-testid="hub-login-component">
+            <HubLoginPage onSuccess={handleHubLoginSuccess} />
+          </div>
+        ) : isErrorPresent ? (
           <div className="info-wrapper" data-testid="warning-component">
             <WarningMessage content={warningText} />
           </div>
         ) : null}
-        {pickerConfig && isPickerReady && (
+        {!showHubLogin && pickerConfig && isPickerReady && (
           <AssetPicker
             config={pickerConfig}
             open={true}

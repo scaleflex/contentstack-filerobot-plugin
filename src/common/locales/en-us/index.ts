@@ -104,6 +104,12 @@ const localeTexts = {
   Warnings: {
     incorrectConfig: `The credentials you entered for the "${rootConfig?.damEnv?.DAM_APP_NAME} App" are invalid or missing. Please update the configuration details and try again.`,
   },
+  HubLogin: {
+    description: `Your ${rootConfig?.damEnv?.DAM_APP_NAME} Hub session has expired or is missing. Please log in to continue.`,
+    button: "Login via Hub",
+    loading: "Logging in...",
+    error: "Login failed. Please try again.",
+  },
   DeleteModal: {
     header: "Remove Asset from Contentstack",
     body: "Are you sure you want to remove <b>&apos;$&apos;</b> from Contentstack?",

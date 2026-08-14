@@ -1,0 +1,25 @@
+.hub-login-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 16px;
+}
+
+.hub-login-logo {
+    height: 64px;
+    width: 64px;
+}
+
+.hub-login-text {
+    color: #647696;
+    font-size: 14px;
+    max-width: 360px;
+}
+
+.hub-login-warning {
+    max-width: 360px;
+}
