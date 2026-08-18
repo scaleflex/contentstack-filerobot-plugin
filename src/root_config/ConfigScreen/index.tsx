@@ -19,6 +19,19 @@ const configureConfigScreen = () =>
 5. If values are stored in serverConfig then those values will not be available to other UI locations
 6. Supported type options are textInputFields, radioInputFields, selectInputFields */
 ({
+  auth_method: {
+    type: "radioInputFields",
+    labelText: "Authentication Method",
+    helpText: "Choose how the app authenticates with Scaleflex DAM.",
+    instructionText: "",
+    options: [
+      { label: "Token + Security Template", value: "token_template" },
+      { label: "Login via Hub", value: "login_hub" },
+    ],
+    defaultSelectedOption: "token_template",
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
   security_template_id: {
     type: "textInputFields",
     labelText: "Security Template Id",
@@ -28,6 +41,7 @@ const configureConfigScreen = () =>
     inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
     saveInConfig: true,
     saveInServerConfig: false,
+    visibleWhen: { field: "auth_method", equals: "token_template" },
   },
   container: {
     type: "textInputFields",
@@ -38,6 +52,7 @@ const configureConfigScreen = () =>
     inputFieldType: "password", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
     saveInConfig: true,
     saveInServerConfig: false,
+    visibleWhen: { field: "auth_method", equals: "token_template" },
   },
   attributes: {
     type: "textInputFields",

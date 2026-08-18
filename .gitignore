@@ -4,5 +4,4 @@ playwright-report
 .env
 .claude
 /graphify-out
-/scripts
 CLAUDE.md

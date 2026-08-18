@@ -95,9 +95,20 @@ const ConfigScreen: React.FC = function () {
     updateConfig(configObj, saveConfig, saveServerConfig);
   };
 
+  // checks a field's optional `visibleWhen: { field, equals }` against the current config
+  const isFieldVisible = (objValue: any) => {
+    if (!objValue?.visibleWhen) return true;
+    const { field, equals } = objValue.visibleWhen;
+    const current =
+      installationData?.configuration?.[field] ??
+      configInputFields?.[field]?.defaultSelectedOption;
+    return current === equals;
+  };
+
   // return render jsx for the config object provided
   const renderConfig = () =>
     Object.entries(configInputFields)?.map(([objKey, objValue, index]: any) => {
+      if (!isFieldVisible(objValue)) return null;
       switch (objValue?.type) {
         case "textInputFields":
           return (
