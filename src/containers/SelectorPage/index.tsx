@@ -77,19 +77,20 @@ const SelectorPage: React.FC<any> = function () {
     window.close();
   }, []);
 
-  // renews the stored Hub session's SASS key (and the session itself) from localStorage
-  // data; only falls back to the login screen if the session itself is unusable
+  // fetches the session's current (backend-renewed) SASS key from the plugins-oauth2
+  // backend, which keeps it fresh server-to-server; only falls back to the login screen
+  // if the backend no longer has this session (never registered, or pruned as unusable)
   const handleHubAuthFlow = useCallback(async () => {
     const stored = HubAuthUtils.getStoredHubAuth();
     if (stored) {
-      const renewed = await HubAuthUtils.renewHubAuth(stored);
-      if (renewed) {
-        HubAuthUtils.saveHubAuth(renewed);
+      const current = await HubAuthUtils.fetchCurrentHubSession(stored.sessionUuid);
+      if (current) {
+        HubAuthUtils.saveHubAuth(current);
         setPickerConfig(
           buildPickerConfig({
             mode: "sassKey" as const,
-            sassKey: renewed.sassKey,
-            projectToken: renewed.token,
+            sassKey: current.sassKey,
+            projectToken: current.token,
           })
         );
         return;
@@ -100,7 +101,8 @@ const SelectorPage: React.FC<any> = function () {
     setShowHubLogin(true);
   }, []);
 
-  const handleHubLoginSuccess = useCallback((data: HubAuthData) => {
+  const handleHubLoginSuccess = useCallback(async (data: HubAuthData) => {
+    await HubAuthUtils.registerHubSession(data);
     HubAuthUtils.saveHubAuth(data);
     setShowHubLogin(false);
     setPickerConfig(

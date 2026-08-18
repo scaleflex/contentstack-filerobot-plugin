@@ -7,7 +7,7 @@ export interface HubAuthData {
 }
 
 const HUB_OAUTH_URL = "https://hub.scaleflex.com/oauth2/login";
-const HUB_API_BASE = "https://hub.scaleflex.com/api";
+const HUB_SESSION_API_BASE = process.env.REACT_APP_HUB_SESSION_API_BASE ?? "";
 const STORAGE_KEY = "sfx_hub_auth";
 
 const getStoredHubAuth = (): HubAuthData | null => {
@@ -27,58 +27,31 @@ const clearHubAuth = (): void => {
   localStorage.removeItem(STORAGE_KEY);
 };
 
-// fetches a fresh SASS key for the project using the current session; null if the session can't authenticate
-const renewSassKey = async (auth: HubAuthData): Promise<string | null> => {
+// registers a freshly-logged-in Hub session with the plugins-oauth2 backend, which then
+// keeps its session/SASS key renewed server-to-server (see plugins-oauth2's
+// ContentstackHubSession model + hourly sfx:renew-contentstack-sessions schedule)
+const registerHubSession = async (data: HubAuthData): Promise<void> => {
+  await fetch(`${HUB_SESSION_API_BASE}/api/contentstack/hub-sessions`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(data),
+  });
+};
+
+// fetches the current (backend-renewed) session/SASS key for a known session_uuid;
+// null if the backend no longer has this session (never registered, or pruned after
+// repeated renewal failures) — the caller should treat that as "log in again"
+const fetchCurrentHubSession = async (sessionUuid: string): Promise<HubAuthData | null> => {
   try {
-    const response = await fetch(`${HUB_API_BASE}/project/${auth.projectUuid}`, {
-      headers: {
-        accept: "application/json",
-        "x-session-token": auth.sessionUuid,
-        "x-company-token": auth.companyUuid,
-      },
-    });
-    const result = await response.json();
-    if (!response.ok || result?.status !== "success") return null;
-    return result?.keychain?.tokens?.airstore_key ?? null;
+    const response = await fetch(
+      `${HUB_SESSION_API_BASE}/api/contentstack/hub-sessions/${sessionUuid}`,
+      { headers: { accept: "application/json" } }
+    );
+    if (!response.ok) return null;
+    return await response.json();
   } catch {
     return null;
   }
-};
-
-// extends the current session and returns its (possibly rotated) uuid; null if it can't be renewed
-const renewSession = async (auth: HubAuthData): Promise<string | null> => {
-  try {
-    const response = await fetch(`${HUB_API_BASE}/session/${auth.sessionUuid}/renew`, {
-      method: "POST",
-      headers: {
-        accept: "application/json",
-        "x-session-token": auth.sessionUuid,
-        "x-company-token": auth.companyUuid,
-        "x-project-token": auth.projectUuid,
-      },
-    });
-    const result = await response.json();
-    if (!response.ok || result?.status !== "success") return null;
-    return result?.session_uuid ?? null;
-  } catch {
-    return null;
-  }
-};
-
-// runs both renewals concurrently; a fresh SASS key is required, a renewed session uuid is best-effort
-const renewHubAuth = async (stored: HubAuthData): Promise<HubAuthData | null> => {
-  const [newSassKey, newSessionUuid] = await Promise.all([
-    renewSassKey(stored),
-    renewSession(stored),
-  ]);
-
-  if (!newSassKey) return null;
-
-  return {
-    ...stored,
-    sassKey: newSassKey,
-    sessionUuid: newSessionUuid ?? stored.sessionUuid,
-  };
 };
 
 // opens the Hub OAuth popup and resolves with the session data it posts back
@@ -130,7 +103,8 @@ const HubAuthUtils = {
   getStoredHubAuth,
   saveHubAuth,
   clearHubAuth,
-  renewHubAuth,
+  registerHubSession,
+  fetchCurrentHubSession,
   openHubLoginPopup,
 };
 
