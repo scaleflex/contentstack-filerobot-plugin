@@ -17,7 +17,7 @@ const configureConfigScreen = () =>
 3. save the fields that are to be accessed in other location in config
 4. either saveInConfig or saveInServerConfig should be true for your field data to be saved in contentstack
 5. If values are stored in serverConfig then those values will not be available to other UI locations
-6. Supported type options are textInputFields, radioInputFields, selectInputFields */
+6. Supported type options are textInputFields, textareaFields, radioInputFields, selectInputFields */
 ({
   auth_method: {
     type: "radioInputFields",
@@ -61,6 +61,26 @@ const configureConfigScreen = () =>
     placeholderText: "ex: meta, tags, info",
     instructionText: "",
     inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
+  assetPickerConfig: {
+    type: "textareaFields",
+    labelText: "Asset Picker Config",
+    helpText: "Optional JSON to customize the asset picker (ex: {\"enableAISearch\": false}). See https://scaleflex.github.io/asset-picker/#/docs/configuration",
+    placeholderText: '{"enableAISearch": false}',
+    instructionText: "",
+    rows: 6,
+    saveInConfig: true,
+    saveInServerConfig: false,
+  },
+  uploaderConfig: {
+    type: "textareaFields",
+    labelText: "Uploader Config",
+    helpText: "Optional JSON to customize the uploader. Takes precedence over any \"uploader\" key set via Asset Picker Config.",
+    placeholderText: '{"showFillMetadata": false}',
+    instructionText: "",
+    rows: 6,
     saveInConfig: true,
     saveInServerConfig: false,
   },
