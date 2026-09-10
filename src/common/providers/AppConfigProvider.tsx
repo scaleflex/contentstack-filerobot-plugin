@@ -60,7 +60,7 @@ const AppConfigProvider = ({ children }: ChildProp) => {
 
   // function to check if field values are empty and handles save button disable on empty field values
   const checkConfigFields = ({ configuration, serverConfiguration }: any) => {
-    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options"];
+    const skipKeys = ["dam_keys", "is_custom_json", "keypath_options", "assetPickerConfig", "uploaderConfig", "attributes"];
     const missingValues: string[] = [];
 
     Object.entries({

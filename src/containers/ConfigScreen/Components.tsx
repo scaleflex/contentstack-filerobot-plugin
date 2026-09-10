@@ -42,15 +42,16 @@ export const TextInputField = function ({
   updateConfig,
 }: TypeConfigComponent) {
   const { installationData, errorState } = useContext(AppConfigContext);
+  const isRequired = objValue?.required !== false;
   return (
     <>
       <Field>
         <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
+          required={isRequired}
+          error={isRequired && errorState?.includes(objKey)}
           htmlFor={`${objKey}-id`}
           requiredText={
-            errorState?.includes(objKey)
+            isRequired && errorState?.includes(objKey)
               ? localeTexts.ConfigFields.emptyValue
               : undefined
           }
@@ -66,7 +67,7 @@ export const TextInputField = function ({
         {/* Change the help caption as per your requirement */}
         <TextInput
           id={`${objKey}-id`}
-          required
+          required={isRequired}
           value={
             // eslint-disable-next-line
             objValue?.saveInConfig
@@ -102,21 +103,11 @@ export const TextareaField = function ({
   objValue,
   updateConfig,
 }: TypeConfigComponent) {
-  const { installationData, errorState } = useContext(AppConfigContext);
+  const { installationData } = useContext(AppConfigContext);
   return (
     <>
       <Field>
-        <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
-          htmlFor={`${objKey}-id`}
-          requiredText={
-            errorState?.includes(objKey)
-              ? localeTexts.ConfigFields.emptyValue
-              : undefined
-          }
-          data-testid="textarea_label"
-        >
+        <FieldLabel htmlFor={`${objKey}-id`} data-testid="textarea_label">
           {objValue?.labelText}
         </FieldLabel>
         {objValue?.helpText && (
@@ -124,7 +115,6 @@ export const TextareaField = function ({
         )}
         <Textarea
           id={`${objKey}-id`}
-          required
           value={
             // eslint-disable-next-line
             objValue?.saveInConfig

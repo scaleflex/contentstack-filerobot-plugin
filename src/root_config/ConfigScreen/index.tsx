@@ -61,6 +61,7 @@ const configureConfigScreen = () =>
     placeholderText: "ex: meta, tags, info",
     instructionText: "",
     inputFieldType: "text", // type: 'text' | 'password' | 'email' | 'number' | 'search' | 'url' | 'date' | 'time' | string;
+    required: false,
     saveInConfig: true,
     saveInServerConfig: false,
   },
