@@ -5,6 +5,7 @@ import {
   Field,
   FieldLabel,
   TextInput,
+  Textarea,
   Line,
   InstructionText,
   Help,
@@ -41,15 +42,16 @@ export const TextInputField = function ({
   updateConfig,
 }: TypeConfigComponent) {
   const { installationData, errorState } = useContext(AppConfigContext);
+  const isRequired = objValue?.required !== false;
   return (
     <>
       <Field>
         <FieldLabel
-          required
-          error={errorState?.includes(objKey)}
+          required={isRequired}
+          error={isRequired && errorState?.includes(objKey)}
           htmlFor={`${objKey}-id`}
           requiredText={
-            errorState?.includes(objKey)
+            isRequired && errorState?.includes(objKey)
               ? localeTexts.ConfigFields.emptyValue
               : undefined
           }
@@ -65,7 +67,7 @@ export const TextInputField = function ({
         {/* Change the help caption as per your requirement */}
         <TextInput
           id={`${objKey}-id`}
-          required
+          required={isRequired}
           value={
             // eslint-disable-next-line
             objValue?.saveInConfig
@@ -83,6 +85,52 @@ export const TextInputField = function ({
           version="v2"
         />
         <InstructionText data-testid="text_instruction">
+          <div
+            dangerouslySetInnerHTML={{
+              __html: objValue?.instructionText,
+            }}
+          />
+        </InstructionText>
+      </Field>
+      <Line type="dashed" />
+    </>
+  );
+};
+
+// component for Textarea Field (multiline text, e.g. JSON blobs)
+export const TextareaField = function ({
+  objKey,
+  objValue,
+  updateConfig,
+}: TypeConfigComponent) {
+  const { installationData } = useContext(AppConfigContext);
+  return (
+    <>
+      <Field>
+        <FieldLabel htmlFor={`${objKey}-id`} data-testid="textarea_label">
+          {objValue?.labelText}
+        </FieldLabel>
+        {objValue?.helpText && (
+          <Help type="secondary" text={objValue?.helpText} data-testid="textarea_help" />
+        )}
+        <Textarea
+          id={`${objKey}-id`}
+          value={
+            // eslint-disable-next-line
+            objValue?.saveInConfig
+              ? installationData?.configuration?.[objKey]
+              : objValue?.saveInServerConfig
+              ? installationData?.serverConfiguration?.[objKey]
+              : ""
+          }
+          placeholder={objValue?.placeholderText}
+          name={objKey}
+          onChange={updateConfig}
+          rows={objValue?.rows ?? 6}
+          data-testid="textarea_input"
+          version="v2"
+        />
+        <InstructionText data-testid="textarea_instruction">
           <div
             dangerouslySetInnerHTML={{
               __html: objValue?.instructionText,

@@ -12,22 +12,51 @@ import "./style.css";
 
 let url: string = "";
 
-// shared picker options, layered on top of the resolved auth config
-const buildPickerConfig = (auth: any) => ({
-  auth,
-  displayMode: "inline" as const,
-  multiSelect: true,
-  uploader: {
-    showFillMetadata: true,
-    metadataConfig: {
-      enforceRequiredBeforeUpload: 'auto',
+// parses a user-supplied JSON config string (from assetPickerConfig/uploaderConfig),
+// falling back to {} and logging on invalid JSON rather than breaking the picker
+const parseJsonConfig = (raw: unknown, label: string): Record<string, any> => {
+  if (typeof raw !== "string" || raw.trim() === "") return {};
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error(`${label}: invalid JSON`, e);
+    return {};
+  }
+};
+
+// shared picker options, layered on top of the resolved auth config, then overridden by
+// the org/field-level assetPickerConfig and (for the uploader block specifically) uploaderConfig
+const buildPickerConfig = (
+  auth: any,
+  assetPickerConfig?: Record<string, any>,
+  uploaderConfig?: Record<string, any>
+) => {
+  const config: any = {
+    displayMode: "inline" as const,
+    multiSelect: true,
+    uploader: {
+      showFillMetadata: true,
+      metadataConfig: {
+        enforceRequiredBeforeUpload: 'auto',
+      },
     },
-  },
-  rememberLastTab: true,
-  rememberLastFolder: true,
-  rememberLastView: true,
-  folderCreation: true
-});
+    rememberLastTab: true,
+    rememberLastFolder: true,
+    rememberLastView: true,
+    folderCreation: true,
+    ...assetPickerConfig,
+  };
+
+  // uploaderConfig is dedicated to the uploader, so it wins over anything set via assetPickerConfig;
+  // auth is always the resolved value so it can't be clobbered by either JSON override
+  config.uploader = {
+    ...config.uploader,
+    ...uploaderConfig,
+  };
+  config.auth = auth;
+
+  return config;
+};
 
 const SelectorPage: React.FC<any> = function () {
   const [isErrorPresent, setIsErrorPresent] = useState<boolean>(false);
@@ -36,6 +65,8 @@ const SelectorPage: React.FC<any> = function () {
   const [showHubLogin, setShowHubLogin] = useState<boolean>(false);
   const [warningText] = useState<string>(localeTexts.Warnings.incorrectConfig);
   const attributesRef = useRef<string>("");
+  const assetPickerConfigRef = useRef<Record<string, any>>({});
+  const uploaderConfigRef = useRef<Record<string, any>>({});
 
   useEffect(() => {
     customElements.whenDefined('sfx-asset-picker').then(() => setIsPickerReady(true));
@@ -87,11 +118,15 @@ const SelectorPage: React.FC<any> = function () {
       if (current) {
         HubAuthUtils.saveHubAuth(current);
         setPickerConfig(
-          buildPickerConfig({
-            mode: "sassKey" as const,
-            sassKey: current.sassKey,
-            projectToken: current.token,
-          })
+          buildPickerConfig(
+            {
+              mode: "sassKey" as const,
+              sassKey: current.sassKey,
+              projectToken: current.token,
+            },
+            assetPickerConfigRef.current,
+            uploaderConfigRef.current
+          )
         );
         return;
       }
@@ -106,11 +141,15 @@ const SelectorPage: React.FC<any> = function () {
     HubAuthUtils.saveHubAuth(data);
     setShowHubLogin(false);
     setPickerConfig(
-      buildPickerConfig({
-        mode: "sassKey" as const,
-        sassKey: data.sassKey,
-        projectToken: data.token,
-      })
+      buildPickerConfig(
+        {
+          mode: "sassKey" as const,
+          sassKey: data.sassKey,
+          projectToken: data.token,
+        },
+        assetPickerConfigRef.current,
+        uploaderConfigRef.current
+      )
     );
   }, []);
 
@@ -123,6 +162,8 @@ const SelectorPage: React.FC<any> = function () {
     ) {
       const attrs = data.config?.["attributes"] || "";
       attributesRef.current = attrs;
+      assetPickerConfigRef.current = parseJsonConfig(data.config?.["assetPickerConfig"], "assetPickerConfig");
+      uploaderConfigRef.current = parseJsonConfig(data.config?.["uploaderConfig"], "uploaderConfig");
 
       if (data.config?.["auth_method"] === "login_hub") {
         handleHubAuthFlow();
@@ -136,11 +177,15 @@ const SelectorPage: React.FC<any> = function () {
         setIsErrorPresent(true);
       } else {
         setPickerConfig(
-          buildPickerConfig({
-            mode: "securityTemplate" as const,
-            securityTemplateKey: securityTemplateId,
-            projectToken: container,
-          })
+          buildPickerConfig(
+            {
+              mode: "securityTemplate" as const,
+              securityTemplateKey: securityTemplateId,
+              projectToken: container,
+            },
+            assetPickerConfigRef.current,
+            uploaderConfigRef.current
+          )
         );
       }
     }

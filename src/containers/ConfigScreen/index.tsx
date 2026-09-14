@@ -10,6 +10,7 @@ import {
   RadioInputField,
   SelectInputField,
   TextInputField,
+  TextareaField,
 } from "./Components";
 import AppConfigContext from "../../common/contexts/AppConfigContext";
 import ConfigStateProvider from "../../common/providers/ConfigStateProvider";
@@ -114,6 +115,16 @@ const ConfigScreen: React.FC = function () {
           return (
             <div key={`${objKey}_${index}`}>
               <TextInputField
+                objKey={objKey}
+                objValue={objValue}
+                updateConfig={updateConfig}
+              />
+            </div>
+          );
+        case "textareaFields":
+          return (
+            <div key={`${objKey}_${index}`}>
+              <TextareaField
                 objKey={objKey}
                 objValue={objValue}
                 updateConfig={updateConfig}
