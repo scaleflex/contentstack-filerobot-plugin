@@ -26,7 +26,8 @@ const buildPickerConfig = (auth: any) => ({
   rememberLastTab: true,
   rememberLastFolder: true,
   rememberLastView: true,
-  folderCreation: true
+  folderCreation: true,
+  humanReadableMetadata: true,
 });
 
 const SelectorPage: React.FC<any> = function () {
