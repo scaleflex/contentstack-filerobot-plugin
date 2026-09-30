@@ -44,6 +44,7 @@ const buildPickerConfig = (
     rememberLastFolder: true,
     rememberLastView: true,
     folderCreation: true,
+    humanReadableMetadata: true,
     ...assetPickerConfig,
   };
 
