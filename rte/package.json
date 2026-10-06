@@ -64,8 +64,9 @@
     "brace-expansion": ">=2.0.1",
     "glob": ">=10.4.5",
     "minimatch": ">=9.0.5",
-    "axios": "^1.19.0",
+    "axios": "^1.20.0",
     "postcss": "^8.5.25",
-    "uuid": "$uuid"
+    "uuid": "$uuid",
+    "@babel/runtime": "^7.26.10"
   }
 }
