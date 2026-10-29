@@ -13,7 +13,10 @@ import utils from "../utils";
 
 const filterAssetData = (assets: any[]) => {
     const getThumbnailUrl = (url: string) => {
-      return url + '&h=200'
+      // keep an existing height (e.g. from a transformation/crop) instead of overriding it
+      if (/[?&]h=/.test(url)) return url;
+      // the stored URL may have no query string left once vh is stripped
+      return url + (url.includes('?') ? '&' : '?') + 'h=200'
     }
     const getType = (typeString: string) => {
       const typeArr = typeString.split("/");

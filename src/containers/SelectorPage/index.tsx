@@ -12,6 +12,11 @@ import "./style.css";
 
 let url: string = "";
 
+// strips the vh (version hash) param before the URL is stored in Contentstack; done with a
+// regex rather than URLSearchParams so the remaining params aren't re-encoded
+const removeVhParam = (link: string): string =>
+  link.replace(/([?&])vh=[^&#]*(&)?/g, (_match, sep, amp) => (amp ? sep : ""));
+
 // parses a user-supplied JSON config string (from assetPickerConfig/uploaderConfig),
 // falling back to {} and logging on invalid JSON rather than breaking the picker
 const parseJsonConfig = (raw: unknown, label: string): Record<string, any> => {
@@ -56,6 +61,12 @@ const buildPickerConfig = (
   };
   config.auth = auth;
 
+  // crop is applied through the transformations (Export Options) dialog, so enabling
+  // crop in assetPickerConfig turns transformations on too
+  if (config.crop === true) {
+    config.transformations = true;
+  }
+
   return config;
 };
 
@@ -83,8 +94,17 @@ const SelectorPage: React.FC<any> = function () {
           customData[key] = (asset as any)[key] ?? (asset.meta as any)?.[key];
         });
       }
+      // prefer the chosen variant, then the transformed/cropped URL, over the original asset URL
+      const link = removeVhParam(
+        asset.selectedVariant?.url ||
+          asset.transformation?.url?.cdn ||
+          asset.transformation?.url?.permalink_cdn ||
+          asset.url?.cdn ||
+          asset.url?.public ||
+          ""
+      );
       return {
-        link: asset.url?.cdn || asset.url?.public || "",
+        link,
         file: {
           name: asset.name,
           uuid: asset.uuid,
